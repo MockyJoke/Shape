@@ -15,12 +15,16 @@ TEMPLATE = app
 SOURCES += main.cpp\
     client.cpp \
     window361.cpp \
-    renderarea361.cpp
+    renderarea361.cpp \
+    LineDrawer.cpp
 
 HEADERS  += \
     drawable.h \
     pageturner.h \
     client.h \
     window361.h \
-    renderarea361.h
+    renderarea361.h \
+    Color.h \
+    LineDrawer.h \
+    ShapeHelper.h
 
