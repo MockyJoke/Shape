@@ -22,21 +22,56 @@ void Client::nextPage() {
 	};
     switch(pageNumber % 4) {
     case 1:
-        draw_rect(0, 0, 750, 750, 0xffff0080);
+        draw_rect(0, 0, 750, 750, Color::WHITE);
 		
-        draw_rect( 50,  50, 350, 350, 0xff00ff40);
-        draw_rect(400,  50, 700, 350, 0xff40ff00);
-        draw_rect( 50, 400, 350, 700, 0xffff8000);
-        draw_rect(400, 400, 700, 700, 0xffffff00);
+        draw_rect( 50,  50, 350, 350, Color::BLACK);
+        draw_rect(400,  50, 700, 350, Color::BLACK);
+        draw_rect( 50, 400, 350, 700, Color::BLACK);
+        draw_rect(400, 400, 700, 700, Color::BLACK);
 		draw_page1(panes);
         drawable->updateScreen();   // you must call this to make the display change.
         break;
     case 2:
+		draw_rect(0, 0, 750, 750, Color::WHITE);
+
+		draw_rect(50, 50, 350, 350, Color::BLACK);
+		draw_rect(400, 50, 700, 350, Color::BLACK);
+		draw_rect(50, 400, 350, 700, Color::BLACK);
+		draw_rect(400, 400, 700, 700, Color::BLACK);
+
+		draw_page2(panes);
+		drawable->updateScreen();
         break;
     case 3:
+		draw_rect(0, 0, 750, 750, Color::WHITE);
+
+		draw_rect(50, 50, 350, 350, Color::BLACK);
+		draw_rect(400, 50, 700, 350, Color::BLACK);
+		draw_rect(50, 400, 350, 700, Color::BLACK);
+		draw_rect(400, 400, 700, 700, Color::BLACK);
+		draw_page3(panes);
+		drawable->updateScreen();
         break;
     case 4:
-        // fall through...
+		draw_rect(0, 0, 750, 750, Color::WHITE);
+
+		draw_rect(50, 50, 350, 350, Color::BLACK);
+		draw_rect(400, 50, 700, 350, Color::BLACK);
+		draw_rect(50, 400, 350, 700, Color::BLACK);
+		draw_rect(400, 400, 700, 700, Color::BLACK);
+		draw_page4(panes);
+		drawable->updateScreen();
+		break;
+	case 5:
+		draw_rect(0, 0, 750, 750, Color::WHITE);
+
+		draw_rect(50, 50, 350, 350, Color::BLACK);
+		draw_rect(400, 50, 700, 350, Color::BLACK);
+		draw_rect(50, 400, 350, 700, Color::BLACK);
+		draw_rect(400, 400, 700, 700, Color::BLACK);
+		draw_page5(panes);
+		drawable->updateScreen();
+		// fall through...
     default:
         draw_rect(0, 0, 750, 750, 0xffffffff);
         draw_rect(400, 400, 700, 700, 0xff00ff40);
@@ -70,4 +105,20 @@ void Client::draw_page1(std::vector<Pane> panes) {
 
 	//Pane 4
 
+}
+
+void Client::draw_page2(std::vector<Pane> panes)
+{
+}
+
+void Client::draw_page3(std::vector<Pane> panes)
+{
+}
+
+void Client::draw_page4(std::vector<Pane> panes)
+{
+}
+
+void Client::draw_page5(std::vector<Pane> panes)
+{
 }

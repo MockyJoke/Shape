@@ -15,6 +15,11 @@ private:
     void draw_rect(int x1, int y1, int x2, int y2, unsigned int color);
 
 	void draw_page1(std::vector<Pane> panes);
+	void draw_page2(std::vector<Pane> panes);
+	void draw_page3(std::vector<Pane> panes);
+	void draw_page4(std::vector<Pane> panes);
+	void draw_page5(std::vector<Pane> panes);
+
 };
 
 #endif // CLIENT_H
