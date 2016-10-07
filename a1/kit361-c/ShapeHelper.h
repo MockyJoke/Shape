@@ -63,4 +63,25 @@ public:
 			selector = (selector + 1) % lineDrawers.size();
 		}
 	}
+
+	static void draw_parallelogram(Pane pane, LineDrawer* lineDrawer) {
+		int bx = pane.topLeft.x;
+		int by = pane.topLeft.y;
+		for (int p = 0; p < 50; p++) {
+			lineDrawer->draw_line(20 + bx, 80 + p + by, 150 + bx, 150 + p + by, Color::WHITE);
+			lineDrawer->draw_line(160 + p + bx, 270 + by, 240 + p + bx, 40 + by, Color::WHITE);
+		}
+	}
+
+	static void draw_parallelogram_alt(Pane pane, std::vector<LineDrawer*> lineDrawers) {
+		int bx = pane.topLeft.x;
+		int by = pane.topLeft.y;
+		int selector = 0;
+		for (int p = 0; p < 50; p++) {
+			lineDrawers[selector]->draw_line(20 + bx, 80 + p + by, 150 + bx, 150 + p + by, Color::WHITE);
+			lineDrawers[selector]->draw_line(160 + p + bx, 270 + by, 240 + p + bx, 40 + by, Color::WHITE);
+			selector = (selector + 1) % lineDrawers.size();
+		}
+	}
+
 };

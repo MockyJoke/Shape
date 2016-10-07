@@ -109,6 +109,20 @@ void Client::draw_page1(std::vector<Pane> panes) {
 
 void Client::draw_page2(std::vector<Pane> panes)
 {
+	//Pane 1
+	DDA_Drawer dda_drawer(drawable);
+	ShapeHelper::draw_parallelogram(panes[0], &dda_drawer);
+
+
+	//Pane 2
+	Bresenham_Drawer bresenham_drawer(drawable);
+	ShapeHelper::draw_parallelogram(panes[1], &bresenham_drawer);
+
+	//Pane 3
+	std::vector<LineDrawer*> lineDrawers = { &dda_drawer,&bresenham_drawer };
+	ShapeHelper::draw_parallelogram_alt(panes[2], lineDrawers);
+
+	//Pane 4
 }
 
 void Client::draw_page3(std::vector<Pane> panes)
