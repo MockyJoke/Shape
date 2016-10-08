@@ -20,7 +20,7 @@ void Client::nextPage() {
 		Pane(Point(50,400),Point(350,700)),
 		Pane(Point(400,400),Point(700,700)),
 	};
-    switch(pageNumber % 4) {
+    switch(pageNumber % 6) {
     case 1:
         draw_rect(0, 0, 750, 750, Color::WHITE);
 		
@@ -127,10 +127,26 @@ void Client::draw_page2(std::vector<Pane> panes)
 
 void Client::draw_page3(std::vector<Pane> panes)
 {
+	//Pane 1
+	DDA_Drawer dda_drawer(drawable);
+	ShapeHelper::draw_randomLine(panes[0], &dda_drawer);
+
+	//Pane 2
+	Bresenham_Drawer bresenham_drawer(drawable);
+	ShapeHelper::draw_randomLine(panes[1], &bresenham_drawer);
+
+	//Pane 3
+	std::vector<LineDrawer*> lineDrawers = { &dda_drawer,&bresenham_drawer };
+	ShapeHelper::draw_randomLine_alt(panes[2], lineDrawers);
+
+	//Pane 4
 }
 
 void Client::draw_page4(std::vector<Pane> panes)
 {
+	//Pane 1
+	TriangleDrawer tri_drawer(drawable);
+	ShapeHelper::draw_starburstTriangle(panes[0], &tri_drawer);
 }
 
 void Client::draw_page5(std::vector<Pane> panes)
