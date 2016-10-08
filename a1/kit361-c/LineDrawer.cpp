@@ -1,7 +1,7 @@
 #include "LineDrawer.h"
 #include <cmath>
 #include <algorithm>
-
+#include "ShapeHelper.h"
 LineDrawer::LineDrawer(Drawable* drawable)
 {
 	this->_drawable = drawable;
@@ -39,7 +39,6 @@ void DDA_Drawer::draw_line(int x1, int y1, int x2, int y2, unsigned int color) {
 		}
 	}
 }
-
 
 Bresenham_Drawer::Bresenham_Drawer(Drawable* drawable)
 	:LineDrawer(drawable) {
@@ -92,4 +91,89 @@ void Bresenham_Drawer::draw_line(int x1, int y1, int x2, int y2, unsigned int co
 		}
 	}
 
+}
+
+
+
+AA_Drawer::AA_Drawer(Drawable* drawable)
+	:LineDrawer(drawable) {
+
+}
+
+AA_Drawer::~AA_Drawer() {
+
+}
+
+void AA_Drawer::draw_line(int x1, int y1, int x2, int y2, unsigned int color) {
+	double m = static_cast<double>(y2 - y1) / static_cast<double>(x2 - x1);
+	double b = y1 - m*x1;
+	LineEx line(PointEx(x1, y1), PointEx(x2, y2));
+	if (abs(m) <= 1) {
+		for (int x = x1; x != x2; x1 < x2 ? x++ : x--)
+		{
+			double y = m * x + b;
+			SetPixelAA_X(PointEx(x,y), line, color);
+			//_drawable->setPixel(x,r_y, color);
+
+		}
+	}
+	else {
+		for (int y = y1; y != y2; y1 < y2 ? y++ : y--)
+		{
+			double x = (y - b) / m;
+			//_drawable->setPixel(static_cast<int>(round(x)), y, color);
+			SetPixelAA_Y(PointEx(x, y), line, color);
+		}
+	}
+}
+
+void AA_Drawer::SetPixelAA_X(PointEx basePoint, LineEx line, unsigned int color)
+{
+
+	double dis = line.GetDistaceToPointEx(PointEx(basePoint.x, round(basePoint.y)));
+	double dis1 = line.GetDistaceToPointEx(PointEx(basePoint.x, round(basePoint.y) - 1));
+	double dis2 = line.GetDistaceToPointEx(PointEx(basePoint.x, round(basePoint.y) + 1));
+
+	if (round(basePoint.y) > basePoint.y) {
+		_drawable->setPixel(round(basePoint.x), round(basePoint.y) + 1, getAAColor(dis2, color));
+	}
+	else if(round(basePoint.y) < basePoint.y) {
+		_drawable->setPixel(round(basePoint.x), round(basePoint.y) - 1, getAAColor(dis2, color));
+
+	}
+	_drawable->setPixel(round(basePoint.x), round(basePoint.y), getAAColor(dis*1.2, color));
+}
+
+void AA_Drawer::SetPixelAA_Y(PointEx basePoint, LineEx line, unsigned int color)
+{
+	double dis = line.GetDistaceToPointEx(PointEx(basePoint.x, round(basePoint.y)));
+	double dis1 = line.GetDistaceToPointEx(PointEx(basePoint.x + 1, round(basePoint.y)));
+	double dis2 = line.GetDistaceToPointEx(PointEx(basePoint.x - 1, round(basePoint.y)));
+
+	if (round(basePoint.x) > basePoint.x) {
+		_drawable->setPixel(round(basePoint.x)+1, round(basePoint.y), getAAColor(dis2, color));
+	}
+	else if (round(basePoint.x) < basePoint.x) {
+		_drawable->setPixel(round(basePoint.x)-1, round(basePoint.y), getAAColor(dis2, color));
+
+	}
+	_drawable->setPixel(round(basePoint.x), round(basePoint.y), getAAColor(dis*1.2, color));
+}
+
+unsigned int AA_Drawer::getAAColor(double distance, unsigned int color)
+{
+	double radius = sqrt(2);
+	if (distance > radius) {
+		return Color::BLACK;
+	}
+	unsigned int o_r = (color << 8) >> 24;
+	unsigned int o_g = (color << 16) >> 24;
+	unsigned int o_b = (color << 24) >> 24;
+
+	unsigned int a_r = unsigned int(o_r*(1 - pow(distance *2.0 / 3.0, 2)));
+	unsigned int a_g = unsigned int(o_g*(1 - pow(distance *2.0 / 3.0, 2)));
+	unsigned int a_b = unsigned int(o_b*(1 - pow(distance *2.0 / 3.0, 2)));
+
+	Color result = Color::FromARGB(255, a_r, a_g, a_b);
+	return result.color;
 }

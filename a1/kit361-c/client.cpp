@@ -104,6 +104,8 @@ void Client::draw_page1(std::vector<Pane> panes) {
 	ShapeHelper::draw_starBurst_alt(panes[2], lineDrawers);
 
 	//Pane 4
+	AA_Drawer aa_drawer(drawable);
+	ShapeHelper::draw_starBurst(panes[3], &aa_drawer);
 
 }
 
@@ -123,6 +125,9 @@ void Client::draw_page2(std::vector<Pane> panes)
 	ShapeHelper::draw_parallelogram_alt(panes[2], lineDrawers);
 
 	//Pane 4
+	AA_Drawer aa_drawer(drawable);
+	ShapeHelper::draw_parallelogram(panes[3], &aa_drawer);
+
 }
 
 void Client::draw_page3(std::vector<Pane> panes)
@@ -140,6 +145,9 @@ void Client::draw_page3(std::vector<Pane> panes)
 	ShapeHelper::draw_randomLine_alt(panes[2], lineDrawers);
 
 	//Pane 4
+	AA_Drawer aa_drawer(drawable);
+	ShapeHelper::draw_randomLine(panes[3], &aa_drawer);
+
 }
 
 void Client::draw_page4(std::vector<Pane> panes)
