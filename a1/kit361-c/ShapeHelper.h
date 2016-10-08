@@ -38,17 +38,9 @@ public:
 	Point p1;
 	Point p2;
 	Line(Point p1, Point p2) :p1(p1), p2(p2) {
-
 	}
 
 	Point GetHrozontalXPoint(int y) {
-		/*std::vector<Point> pts = { p1,p2 };
-		std::sort(pts.begin(), pts.end(), [](Point p1, Point p2) {
-			return p1.y < p2.y;
-		});
-		int dy = pts[1].y - pts[0].y;
-		double size = (y - pts[0].y) / static_cast<double>(pts[0].y);
-		int dx= abs(pts[0])*/
 		if (p1.x == p2.x) {
 			return Point(p1.x, y);
 		}
@@ -72,10 +64,27 @@ public:
 class TriangleDrawer {
 private:
 	Drawable* _drawable;
-public:
-	TriangleDrawer(Drawable* drawable)
-		:_drawable(drawable) {
+	double mixOpacity;
+	unsigned int mixColor(unsigned int old_color, unsigned int new_color) {
+		if (mixOpacity == 1)
+			return new_color;
+		unsigned int o_r = (old_color << 8) >> 24;
+		unsigned int o_g = (old_color << 16) >> 24;
+		unsigned int o_b = (old_color << 24) >> 24;
+		unsigned int n_r = (new_color << 8) >> 24;
+		unsigned int n_g = (new_color << 16) >> 24;
+		unsigned int n_b = (new_color << 24) >> 24;
+		unsigned int a_r = unsigned int(mixOpacity * o_r + (1 - mixOpacity) * n_r);
+		unsigned int a_g = unsigned int(mixOpacity * o_g + (1 - mixOpacity) * n_g);
+		unsigned int a_b = unsigned int(mixOpacity * o_b + (1 - mixOpacity) * n_b);
 
+		Color result = Color::FromARGB(255, a_r, a_g, a_b);
+		return result.color;
+
+	}
+public:
+	TriangleDrawer(Drawable* drawable,double mixOpacity=1)
+		:_drawable(drawable),mixOpacity(mixOpacity) {
 	}
 	void drawTriangle(std::vector<Point> threePoints, unsigned int color) {
 		std::sort(threePoints.begin(), threePoints.end(), [](Point p1, Point p2) {
@@ -117,9 +126,9 @@ public:
 	}
 	void horizontalFill(int y, int x1, int x2, unsigned int color) {
 		for (int x = x1; x != x2; x1 < x2 ? x++ : x--) {
-			_drawable->setPixel(x, y, color);
+			_drawable->setPixel(x, y, mixColor(_drawable->getPixel(x,y),color));
 		}
-		_drawable->setPixel(x2, y, color);
+		_drawable->setPixel(x2, y, mixColor(_drawable->getPixel(x2, y), color));
 
 	}
 };
@@ -127,6 +136,7 @@ class ShapeHelper {
 private:
 public:
 	static const int STARBURST_INTERVAL = 4;
+
 	static void draw_starBurst(Pane pane, LineDrawer* lineDrawer) {
 		int degree = 0;
 		Point pane_center = Point::GetMidPoint(pane.topLeft, pane.botRight);
@@ -269,7 +279,7 @@ public:
 		for (int j = 1; j < 10; j++) {
 			for (int i = 1; i < 10; i++) {
 				triDrawer->drawTriangle(
-				{ pointSlots[j-1][i-1] ,
+				{ pointSlots[j - 1][i - 1] ,
 					pointSlots[j - 1][i] ,
 					pointSlots[j][i - 1] },
 					c.randNextColor());
@@ -279,6 +289,22 @@ public:
 					pointSlots[j][i] },
 					c.randNextColor());
 			}
+		}
+	}
+
+	static void draw_randomTriangle(Pane pane, TriangleDrawer* triDrawer) {
+		Color c;
+		std::default_random_engine generator;
+		std::uniform_int_distribution<int> distribution_coord(0, 299);
+		Point j;
+		int x = pane.topLeft.x;
+		int y = pane.topLeft.y;
+		for (int i = 0; i < 120; i++) {
+			triDrawer->drawTriangle({
+				Point(distribution_coord(generator) + x,distribution_coord(generator) + y),
+				Point(distribution_coord(generator) + x,distribution_coord(generator) + y),
+				Point(distribution_coord(generator) + x,distribution_coord(generator) + y),
+			}, c.randNextColor());
 		}
 	}
 };

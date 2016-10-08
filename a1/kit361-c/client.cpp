@@ -20,7 +20,7 @@ void Client::nextPage() {
 		Pane(Point(50,400),Point(350,700)),
 		Pane(Point(400,400),Point(700,700)),
 	};
-    switch(pageNumber % 6) {
+    switch(pageNumber % 7) {
     case 1:
         draw_rect(0, 0, 750, 750, Color::WHITE);
 		
@@ -71,7 +71,7 @@ void Client::nextPage() {
 		draw_rect(400, 400, 700, 700, Color::BLACK);
 		draw_page5(panes);
 		drawable->updateScreen();
-		// fall through...
+		break;
     default:
         draw_rect(0, 0, 750, 750, 0xffffffff);
         draw_rect(400, 400, 700, 700, 0xff00ff40);
@@ -153,8 +153,23 @@ void Client::draw_page4(std::vector<Pane> panes)
 
 	//Pane 3
 	ShapeHelper::draw_squaredShiftedTriangle(panes[2], &tri_drawer);
+
+	//Pane 4
+	ShapeHelper::draw_randomTriangle(panes[3], &tri_drawer);
 }
 
 void Client::draw_page5(std::vector<Pane> panes)
 {
+	//Pane 1
+	TriangleDrawer tri_drawer(drawable, 0.3);
+	ShapeHelper::draw_starburstTriangle(panes[0], &tri_drawer);
+
+	//Pane 2 
+	ShapeHelper::draw_squaredTriangle(panes[1], &tri_drawer);
+
+	//Pane 3
+	ShapeHelper::draw_squaredShiftedTriangle(panes[2], &tri_drawer);
+
+	//Pane 4
+	ShapeHelper::draw_randomTriangle(panes[3], &tri_drawer);
 }

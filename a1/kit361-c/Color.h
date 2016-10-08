@@ -18,6 +18,7 @@ public:
 		uint32_t result = va + vr + vg + vb;
 		return result;
 	}
+
 	unsigned color;
 	Color() {
 		distribution_color = std::uniform_int_distribution<unsigned int>(0, 255);
@@ -25,6 +26,15 @@ public:
 			distribution_color(generator),
 			distribution_color(generator),
 			distribution_color(generator));
+	}
+	Color(unsigned int color):color(color) {
+	}
+	std::vector<unsigned int> GetARGBs() {
+		unsigned int a = color>>24;
+		unsigned int r = (color<<8)>>24;
+		unsigned int g = (color << 16) >> 24;
+		unsigned int b = (color << 24) >> 24;
+		return{ a,r,g,b };
 	}
 	unsigned int randNextColor() {
 		color = Color::FromARGB(255,

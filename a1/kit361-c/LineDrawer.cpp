@@ -92,5 +92,4 @@ void Bresenham_Drawer::draw_line(int x1, int y1, int x2, int y2, unsigned int co
 		}
 	}
 
-
 }
