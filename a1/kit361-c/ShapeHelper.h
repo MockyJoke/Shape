@@ -31,7 +31,6 @@ public:
 		int y = static_cast<int>(sin(angleInRadian) * distance);
 		return Point(this->x + x, this->y - y);
 	}
-
 };
 
 class Line {
@@ -83,16 +82,15 @@ public:
 			return p1.y < p2.y;
 		});
 		if (threePoints[1].y != threePoints[2].y) {
-			
+
 			Line line(threePoints[0], threePoints[2]);
 			Point p4 = line.GetHrozontalXPoint(threePoints[1].y);
 			draw_horizontalTriangle({ p4,threePoints[1],threePoints[2] }, color);
 			draw_horizontalTriangle({ threePoints[0],threePoints[1],p4 }, color);
-			
+
 		}
 		else {
 			draw_horizontalTriangle({ threePoints[0],threePoints[1],threePoints[2] }, color);
-
 		}
 
 	}
@@ -115,12 +113,14 @@ public:
 				horizontalFill(y, leftPt.x, rightPt.x, color);
 			}
 		}
-		
+
 	}
 	void horizontalFill(int y, int x1, int x2, unsigned int color) {
 		for (int x = x1; x != x2; x1 < x2 ? x++ : x--) {
 			_drawable->setPixel(x, y, color);
 		}
+		_drawable->setPixel(x2, y, color);
+
 	}
 };
 class ShapeHelper {
@@ -178,16 +178,16 @@ public:
 
 		for (int i = 0; i <= 120; i++) {
 
-			unsigned int color = Color::FromARGB(255, 
+			unsigned int color = Color::FromARGB(255,
 				distribution_color(generator),
-				distribution_color(generator), 
+				distribution_color(generator),
 				distribution_color(generator));
 
 
-			lineDrawer->draw_line(distribution_coord(generator) +bx, 
-				distribution_coord(generator) + by, 
-				distribution_coord(generator) + bx, 
-				distribution_coord(generator) + by, 
+			lineDrawer->draw_line(distribution_coord(generator) + bx,
+				distribution_coord(generator) + by,
+				distribution_coord(generator) + bx,
+				distribution_coord(generator) + by,
 				color);
 		}
 	}
@@ -225,8 +225,60 @@ public:
 			Point endPoint1 = pane_center.GetPointBy_AngleAndDistance(degree, 125);
 			degree += STARBURST_INTERVAL;
 			Point endPoint2 = pane_center.GetPointBy_AngleAndDistance(degree, 125);
-			//lineDrawer->draw_line(pane_center.x, pane_center.y, endPoint.x, endPoint.y, Color::WHITE);
-			triDrawer->drawTriangle(std::vector<Point>{ pane_center,endPoint1,endPoint2 },c.randNextColor());
+			triDrawer->drawTriangle(std::vector<Point>{ pane_center, endPoint1, endPoint2 }, c.randNextColor());
+		}
+	}
+
+	static void draw_squaredTriangle(Pane pane, TriangleDrawer* triDrawer) {
+		int stepX = (pane.botRight.x - pane.topLeft.x) / 12;
+		int stepY = (pane.botRight.y - pane.topLeft.y) / 12;
+		int startX = static_cast<int>(1.5*stepX + pane.topLeft.x);
+		int startY = static_cast<int>(1.5*stepY + pane.topLeft.y);
+		Point startPt(startX, startY);
+		Color c;
+
+		for (int j = 1; j < 10; j++) {
+			for (int i = 1; i < 10; i++) {
+				std::vector<Point> pts = {
+					Point(startX + (i - 1)*stepX,startY + (j - 1)*stepY),
+					Point(startX + (i)*stepX,startY + (j - 1)*stepY),
+					Point(startX + (i - 1)*stepX,startY + (j)*stepY),
+					Point(startX + (i)*stepX,startY + (j)*stepY)
+				};
+				triDrawer->drawTriangle({ pts[0] ,pts[1],pts[2] }, c.randNextColor());
+				triDrawer->drawTriangle({ pts[3] ,pts[1],pts[2] }, c.randNextColor());
+			}
+		}
+	}
+
+	static void draw_squaredShiftedTriangle(Pane pane, TriangleDrawer* triDrawer) {
+		int stepX = (pane.botRight.x - pane.topLeft.x) / 12;
+		int stepY = (pane.botRight.y - pane.topLeft.y) / 12;
+		int startX = static_cast<int>(1.5*stepX + pane.topLeft.x);
+		int startY = static_cast<int>(1.5*stepY + pane.topLeft.y);
+		Point startPt(startX, startY);
+		Color c;
+		std::default_random_engine generator;
+		std::uniform_int_distribution<int> offset(-12, 12);
+		Point pointSlots[10][10];
+		for (int j = 0; j < 10; j++) {
+			for (int i = 0; i < 10; i++) {
+				pointSlots[j][i] = Point(startX + i*stepX + offset(generator), startY + j*stepY + offset(generator));
+			}
+		}
+		for (int j = 1; j < 10; j++) {
+			for (int i = 1; i < 10; i++) {
+				triDrawer->drawTriangle(
+				{ pointSlots[j-1][i-1] ,
+					pointSlots[j - 1][i] ,
+					pointSlots[j][i - 1] },
+					c.randNextColor());
+				triDrawer->drawTriangle({
+					pointSlots[j][i - 1] ,
+					pointSlots[j - 1][i] ,
+					pointSlots[j][i] },
+					c.randNextColor());
+			}
 		}
 	}
 };

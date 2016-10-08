@@ -147,6 +147,12 @@ void Client::draw_page4(std::vector<Pane> panes)
 	//Pane 1
 	TriangleDrawer tri_drawer(drawable);
 	ShapeHelper::draw_starburstTriangle(panes[0], &tri_drawer);
+
+	//Pane 2 
+	ShapeHelper::draw_squaredTriangle(panes[1], &tri_drawer);
+
+	//Pane 3
+	ShapeHelper::draw_squaredShiftedTriangle(panes[2], &tri_drawer);
 }
 
 void Client::draw_page5(std::vector<Pane> panes)
