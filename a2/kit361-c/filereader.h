@@ -65,7 +65,7 @@ public:
 		return m;
 	}
 	static Matrix GetRotateMatrix(char axis, double degree) {
-		degree = degree / 3.141592653;
+		degree = degree *3.141592653 /180.0;
 		Matrix m = GetIdentityMatrix(4);
 		switch (axis) {
 		case 'X':
@@ -162,15 +162,31 @@ public:
 				transMatrix = Matrix::Multiply(m, transMatrix);
 			}
 			else if (words[0] == "polygon") {
-				string param = line.substr(line.find_first_of(' '), line.length() - 7);
-				param.erase(remove_if(param.begin(), param.end(), [](char x) {
-					return std::isspace(x) || x == '(';
-				}), param.end());
-				param = replaceString(param, ")", ",");
-				vector<string> paramList = split(param, ',');
+				//string param = line.substr(line.find_first_of(' '), line.length() - 7);
+				//auto l = extractParameters(line);
 
 			}
-			transMatrix.PrintMatrix();
+			else if (words[0] == "line") {
+				//string param = line.substr(line.find_first_of(' '), line.length() - 7);
+				//auto l = extractParameters(line);
+
+			}
+			else if (words[0] == "mesh") {
+				//string param = line.substr(line.find_first_of(' '), line.length() - 7);
+				//auto l = extractParameters(line);
+
+			}
+			else if (words[0] == "wire") {
+				//string param = line.substr(line.find_first_of(' '), line.length() - 7);
+				//auto l = extractParameters(line);
+
+			}
+			else if (words[0] == "filled") {
+				//string param = line.substr(line.find_first_of(' '), line.length() - 7);
+				//auto l = extractParameters(line);
+
+			}
+			//transMatrix.PrintMatrix();
 		}
 	}
 };

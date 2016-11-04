@@ -157,10 +157,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="client.h" />
-    <ClInclude Include="Debug.h" />
     <ClInclude Include="drawable.h" />
+    <ClInclude Include="drawers.h" />
     <ClInclude Include="filereader.h" />
     <ClInclude Include="pageturner.h" />
+    <ClInclude Include="shapeHelper.h" />
     <ClInclude Include="stringhelper.h" />
     <ClInclude Include="utility.h" />
     <CustomBuild Include="renderarea361.h">

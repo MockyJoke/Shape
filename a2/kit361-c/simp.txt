@@ -14,7 +14,7 @@
     }
     {
         translate 10 10 0
-        rotate -150
+        rotate Z -150
         mesh "longform"
     }
 }

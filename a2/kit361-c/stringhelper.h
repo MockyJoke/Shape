@@ -52,3 +52,19 @@ std::string replaceString(std::string subject, const std::string& search,
 	}
 	return subject;
 }
+
+std::vector<std::vector<std::string>> extractParameters(std::string& line){
+	std::string command = getFirstWord(line);
+	std::string param = line.substr(command.length() + 1, line.length() - (command.length() + 1));
+	std::vector<std::vector<std::string>> result;
+	param.erase(remove_if(param.begin(), param.end(), 
+		[](char x) {
+			return std::isspace(x) || x == '(';
+		}), param.end());
+	std::vector<std::string> paramGroups = split(param, ')');
+	for (auto group : paramGroups)
+	{
+		result.push_back(split(group, ','));
+	}
+	return result;
+}

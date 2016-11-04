@@ -19,6 +19,21 @@ public:
 		return result;
 	}
 
+	static unsigned int FromLerp(unsigned int c1, unsigned int c2,double percent) {
+		std::vector<int> com1 = Color(c1).GetARGBs();
+		std::vector<int> com2 = Color(c2).GetARGBs();
+		std::vector<unsigned int> com;
+
+		com.push_back(255);
+		for (int i = 1; i < 4; i++) {
+			unsigned int y = com1[i] + percent * (com2[i] - com1[i]);
+			com.push_back(y);
+		}
+		uint32_t c = Color::FromARGB(com[0], com[1], com[2], com[3]);
+		return c;
+	}
+
+
 	unsigned color;
 	Color() {
 		distribution_color = std::uniform_int_distribution<unsigned int>(0, 255);
@@ -29,11 +44,11 @@ public:
 	}
 	Color(unsigned int color) :color(color) {
 	}
-	std::vector<unsigned int> GetARGBs() {
-		unsigned int a = color >> 24;
-		unsigned int r = (color << 8) >> 24;
-		unsigned int g = (color << 16) >> 24;
-		unsigned int b = (color << 24) >> 24;
+	std::vector<int> GetARGBs() {
+		int a = color >> 24;
+		int r = (color << 8) >> 24;
+		int g = (color << 16) >> 24;
+		int b = (color << 24) >> 24;
 		return{ a,r,g,b };
 	}
 	unsigned int randNextColor() {
@@ -45,40 +60,41 @@ public:
 	}
 };
 
-#define PI 3.141592659
-class Point
+
+
+class Point2D
 {
 public:
 	int x;
 	int y;
-	static Point GetMidPoint(Point p1, Point p2) {
+	static Point2D GetMidPoint(Point2D p1, Point2D p2) {
 		int x = (p1.x + p2.x) / 2;
 		int y = (p1.y + p2.y) / 2;
-		return Point(x, y);
+		return Point2D(x, y);
 	}
-	Point() {
+	Point2D() {
 		x = 0;
 		y = 0;
 	}
-	Point(int x, int y) {
+	Point2D(int x, int y) {
 		this->x = x;
 		this->y = y;
 	}
-	Point GetPointBy_AngleAndDistance(double angleInDegree, int distance) {
-		double angleInRadian = (angleInDegree / 360) * 2 * PI;
+	Point2D GetPointBy_AngleAndDistance(double angleInDegree, int distance) {
+		double angleInRadian = (angleInDegree / 360) * 2 * 3.141592653;
 		int x = static_cast<int>(cos(angleInRadian) * distance);
 		int y = static_cast<int>(sin(angleInRadian) * distance);
-		return Point(this->x + x, this->y - y);
+		return Point2D(this->x + x, this->y - y);
 	}
 };
 
+
 class Pane {
 public:
-	Point topLeft;
-	Point botRight;
-	Pane(Point pane_topLeft, Point pane_botRight) {
+	Point2D topLeft;
+	Point2D botRight;
+	Pane(Point2D pane_topLeft, Point2D pane_botRight) {
 		topLeft = pane_topLeft;
 		botRight = pane_botRight;
 	}
 };
-

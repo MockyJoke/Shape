@@ -87,7 +87,10 @@
     <ClInclude Include="stringhelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Debug.h">
+    <ClInclude Include="drawers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="shapeHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
