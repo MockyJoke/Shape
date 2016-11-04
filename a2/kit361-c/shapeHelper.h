@@ -78,14 +78,19 @@ public:
 
 	static void drawTriangle3D(Pane pane, TriangleDrawer3D* drawer, vector<ColorPoint3D> threePoints, Matrix transMatrix) {
 		ViewBox viewBox(-100, 100, -100, 100, 0, 200);
+		transMatrix = Matrix::GetRotateMatrix('Z', 0) * transMatrix;
 		Point2D mid = Point2D::GetMidPoint(pane.topLeft, pane.botRight);
 		Matrix m_s = Matrix::GetScaleMatrix(650/200.0,-1*650/200.0,1);
 		Matrix m_t = Matrix::GetTranslateMatrix(mid.x, mid.y, 0);
+		
 		transMatrix = m_t*(m_s*transMatrix);
+		
+		transMatrix.PrintMatrix();
 		vector<ColorPoint3D> transformedPoints;
 		for (auto& p : threePoints) {
 			transformedPoints.push_back(ColorPoint3D(Matrix::Multiply(transMatrix, p.GetMatrix())));
 		}
+
 		drawer->drawTriangle(transformedPoints);
 	}
 };

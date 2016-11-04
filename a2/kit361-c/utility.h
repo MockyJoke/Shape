@@ -238,14 +238,14 @@ public:
 		x = (int)m.data[0][0];
 		y = (int)m.data[1][0];
 		z = (int)m.data[2][0];
-		z = (int)m.data[3][0];
+		w = (int)m.data[3][0];
 	}
 
 	Matrix GetMatrix() {
 		Matrix m(4, 1);
 		m.data[0][0] = x;
 		m.data[1][0] = y;
-		m.data[2][0] = y;
+		m.data[2][0] = z;
 		m.data[3][0] = w;
 		return m;
 	}
@@ -308,11 +308,21 @@ public:
 	Color c2;
 
 	Line(Point2D p1, Point2D p2) :p1(p1), p2(p2) {
+		checkSwap();
 	}
 	Line(Point2D p1, Point2D p2, Color c1, Color c2) :p1(p1), p2(p2), c1(c1), c2(c2) {
+		checkSwap();
 	}
 	Line(pair<Point2D, Color> p1, pair<Point2D, Color> p2) 
 		:Line(p1.first, p2.first, p1.second, p2.second) {
+		checkSwap();
+
+	}
+	void checkSwap() {
+		/*if (p1.y < p2.y) {
+			swap(p1, p2);
+			swap(c1, c2);
+		}*/
 	}
 	Point2D GetHrizontalXPoint(int y) {
 		if (p1.x == p2.x) {
@@ -326,7 +336,10 @@ public:
 
 	std::pair<Point2D,Color> GetHrizontalXPoint_blerp(int y) {
 		if (p1.x == p2.x) {
-			return pair<Point2D, Color>(Point2D(p1.x, y), c1);
+			//return pair<Point2D, Color>(Point2D(p1.x, y), c1);
+			double percent = static_cast<double>(y - p1.y) / (p2.y - p1.y);
+			Color c = Color::FromLerp(c1.color, c2.color, percent);
+			return pair<Point2D, Color>(Point2D(p1.x, y), c);
 		}
 		double m = static_cast<double>(p2.y - p1.y) / static_cast<double>(p2.x - p1.x);
 		double b = static_cast<double>(p1.y) - m * p1.x;
