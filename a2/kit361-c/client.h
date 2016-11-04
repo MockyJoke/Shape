@@ -12,9 +12,15 @@ public:
 private:
     Drawable *drawable;
     void draw_rect(int x1, int y1, int x2, int y2, unsigned int color);
-	void draw_page1() {
+	void draw_page1();
+	void draw_page2();
+	void draw_page3();
+	void draw_page4();
+	void draw_page5();
+	void draw_page6();
 
-	}
+
+
 };
 
 #endif // CLIENT_H

@@ -43,7 +43,6 @@ public:
 			distribution_color(generator));
 		return color;
 	}
-
 };
 
 #define PI 3.141592659
@@ -82,3 +81,4 @@ public:
 		botRight = pane_botRight;
 	}
 };
+

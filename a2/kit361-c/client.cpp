@@ -1,6 +1,8 @@
 #include <iostream>
 #include "client.h"
 #include "utility.h"
+#include "filereader.h"
+
 Client::Client(Drawable *drawable)
 {
     this->drawable = drawable;
@@ -16,12 +18,17 @@ void Client::nextPage() {
     case 1:
         draw_rect(0, 0, 750, 750, Color::WHITE);
         draw_rect( 50,  50, 700, 700, Color::BLACK);
-
+		draw_page1();
         drawable->updateScreen();   // you must call this to make the display change.
-        break;
+        //break;
     case 2:
-        break;
+        //break;
     case 3:
+		draw_rect(0, 0, 750, 750, Color::WHITE);
+		draw_rect(50, 50, 700, 700, Color::BLACK);
+		draw_page3();
+
+		drawable->updateScreen();   // you must call this to make the display change.
         break;
     case 4:
         // fall through...
@@ -38,4 +45,31 @@ void Client::draw_rect(int x1, int y1, int x2, int y2, unsigned int color) {
             drawable->setPixel(x, y, color);
         }
     }
+}
+
+void Client::draw_page1()
+{
+}
+
+void Client::draw_page2()
+{
+}
+
+void Client::draw_page3() {
+	std::ifstream simpFileStream;
+	simpFileStream.open("simp.txt");
+	SimpReader reader(&simpFileStream);
+	reader.Run();
+}
+
+void Client::draw_page4()
+{
+}
+
+void Client::draw_page5()
+{
+}
+
+void Client::draw_page6()
+{
 }
