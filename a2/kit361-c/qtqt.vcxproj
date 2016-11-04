@@ -159,6 +159,7 @@
     <ClInclude Include="client.h" />
     <ClInclude Include="drawable.h" />
     <ClInclude Include="drawers.h" />
+    <ClInclude Include="drawers3d.h" />
     <ClInclude Include="filereader.h" />
     <ClInclude Include="pageturner.h" />
     <ClInclude Include="shapeHelper.h" />

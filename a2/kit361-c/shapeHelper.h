@@ -2,6 +2,7 @@
 #include "utility.h"
 #include <vector>
 #include "drawers.h"
+#include "drawers3d.h"
 #include <tuple>
 using namespace std;
 class ShapeHelper {
@@ -34,7 +35,7 @@ public:
 			}
 		}
 	}
-	static void draw_squaredShiftedTriangle(Pane pane, TriangleDrawer* triDrawer, LineDrawer* lineDrawer) {
+	static void draw_squaredShiftedTriangle(Pane pane, TriangleDrawer* triDrawer) {
 		int stepX = (pane.botRight.x - pane.topLeft.x) / 12;
 		int stepY = (pane.botRight.y - pane.topLeft.y) / 12;
 		int startX = static_cast<int>(1.5*stepX + pane.topLeft.x);
@@ -66,5 +67,25 @@ public:
 				});
 			}
 		}
+	}
+};
+
+class ShapeHelper3D {
+public:
+	static void drawLine3d(Pane pane, LineDrawer3D* drawer, ColorPoint3D p1, ColorPoint3D p2, Matrix transMatrix) {
+		return;
+	}
+
+	static void drawTriangle3D(Pane pane, TriangleDrawer3D* drawer, vector<ColorPoint3D> threePoints, Matrix transMatrix) {
+		ViewBox viewBox(-100, 100, -100, 100, 0, 200);
+		Point2D mid = Point2D::GetMidPoint(pane.topLeft, pane.botRight);
+		Matrix m_s = Matrix::GetScaleMatrix(650/200.0,-1*650/200.0,1);
+		Matrix m_t = Matrix::GetTranslateMatrix(mid.x, mid.y, 0);
+		transMatrix = m_t*(m_s*transMatrix);
+		vector<ColorPoint3D> transformedPoints;
+		for (auto& p : threePoints) {
+			transformedPoints.push_back(ColorPoint3D(Matrix::Multiply(transMatrix, p.GetMatrix())));
+		}
+		drawer->drawTriangle(transformedPoints);
 	}
 };

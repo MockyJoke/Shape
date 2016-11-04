@@ -18,6 +18,10 @@ private:
 	void draw_page4(Pane pane);
 	void draw_page5(Pane pane);
 	void draw_page6(Pane pane);
+	void draw_page7(Pane pane);
+	void draw_page8(Pane pane);
+
+	
 
 
 

@@ -3,110 +3,11 @@
 #include <stack>
 #include <fstream>
 #include "stringhelper.h"
+#include "drawers3d.h"
 #include <cmath>
-#ifdef _WINDOWS
-#include "windows.h"
-#endif // _WINDOWS
+#include "utility.h"
+#include "shapeHelper.h"
 using namespace std;
-
-class Matrix {
-public:
-	double** data;
-	int Cols;
-	int Rows;
-	Matrix(int rows, int cols) {
-		Rows = rows;
-		Cols = cols;
-		data = new double*[rows];
-		for (int i = 0; i < rows; i++) {
-			data[i] = new double[cols];
-			for (int j = 0; j < cols; j++) {
-				data[i][j] = 0;
-			}
-		}
-	}
-	static Matrix GetIdentityMatrix(int n) {
-		Matrix m(n, n);
-		for (int i = 0; i < n; i++) {
-			m.data[i][i] = 1;
-		}
-		return m;
-	}
-
-	static Matrix Multiply(Matrix m1, Matrix m2) {
-		if (m1.Cols != m2.Rows) {
-			return Matrix(0, 0);
-		}
-		Matrix m(m1.Rows, m2.Cols);
-
-		for (int i = 0; i < m1.Rows; i++) {
-			for (int j = 0; j < m2.Cols; j++) {
-				double cell = 0;
-				for (int k = 0; k < m1.Cols; k++) {
-					cell += m1.data[i][k] * m2.data[k][j];
-				}
-				m.data[i][j] = cell;
-			}
-		}
-		return m;
-	}
-	static Matrix GetScaleMatrix(double sx,double sy, double sz) {
-		Matrix m = GetIdentityMatrix(4);
-		m.data[0][0] = sx;
-		m.data[1][1] = sy;
-		m.data[2][2] = sz;
-		return m;
-	}
-	static Matrix GetTranslateMatrix(double vx, double vy, double vz) {
-		Matrix m = GetIdentityMatrix(4);
-		m.data[0][3] = vx;
-		m.data[1][3] = vy;
-		m.data[2][3] = vz;
-		return m;
-	}
-	static Matrix GetRotateMatrix(char axis, double degree) {
-		degree = degree *3.141592653 /180.0;
-		Matrix m = GetIdentityMatrix(4);
-		switch (axis) {
-		case 'X':
-			m.data[1][1] = cos(degree);
-			m.data[1][2] = sin(degree)*-1;
-			m.data[2][1] = sin(degree);
-			m.data[2][2] = cos(degree);
-			break;
-		case 'Y':
-			m.data[0][0] = cos(degree);
-			m.data[2][0] = sin(degree)*-1;
-			m.data[0][2] = sin(degree);
-			m.data[2][2] = cos(degree);
-			break;
-		case 'Z':
-			m.data[0][0] = cos(degree);
-			m.data[0][1] = sin(degree)*-1;
-			m.data[1][0] = sin(degree);
-			m.data[1][1] = cos(degree);
-			break;
-		}
-		return m;
-	}
-	void PrintMatrix() {
-#ifdef _WINDOWS
-		OutputDebugString(L"-------------------\r\n");
-		for (int i = 0; i < Rows; i++) {
-			for (int j = 0; j < Cols; j++) {
-				char buf[32];
-				sprintf_s(buf, 32, "%f, ", data[i][j]);
-				wstring str(buf,buf+32);
-				OutputDebugString(str.c_str());
-			}
-			OutputDebugString(L"\r\n");
-		}
-#endif // _WINDOWS
-
-	}
-};
-
-
 
 class SimpReader{
 private:
@@ -120,7 +21,7 @@ public:
 		this->fileStream = fileStream;
 	}
 
-	void Run() {
+	void Run(Pane pane,Drawable* drawable) {
 		string lineBuf;
 		Matrix transMatrix = Matrix::GetIdentityMatrix(4);
 		stack<Matrix> matrixStack = stack<Matrix>();
@@ -162,13 +63,32 @@ public:
 				transMatrix = Matrix::Multiply(m, transMatrix);
 			}
 			else if (words[0] == "polygon") {
-				//string param = line.substr(line.find_first_of(' '), line.length() - 7);
-				//auto l = extractParameters(line);
-
+				auto params = extractParameters(line);
+				ColorPoint3D p1 = ColorPoint3D(stoi(params[1][0]),
+					stoi(params[1][1]),
+					stoi(params[1][2]));
+				ColorPoint3D p2 = ColorPoint3D(stoi(params[2][0]),
+					stoi(params[2][1]),
+					stoi(params[2][2]));
+				ColorPoint3D p3 = ColorPoint3D(stoi(params[3][0]),
+					stoi(params[3][1]),
+					stoi(params[3][2]));
+				TriangleDrawer3D drawer(drawable);
+				ShapeHelper3D::drawTriangle3D(pane, &drawer, { p1,p2,p3 }, transMatrix);
+				drawable->updateScreen();   // you must call this to make the display change.
 			}
 			else if (words[0] == "line") {
-				//string param = line.substr(line.find_first_of(' '), line.length() - 7);
-				//auto l = extractParameters(line);
+
+				auto params = extractParameters(line);
+				ColorPoint3D p1 = ColorPoint3D(stoi(params[1][0]),
+					stoi(params[1][1]),
+					stoi(params[1][2]));
+				ColorPoint3D p2 = ColorPoint3D(stoi(params[2][0]),
+					stoi(params[2][1]),
+					stoi(params[2][2]));
+				DDA_Drawer3D drawer(drawable);
+
+				ShapeHelper3D::drawLine3d(pane, &drawer, p1, p2, transMatrix);
 
 			}
 			else if (words[0] == "mesh") {

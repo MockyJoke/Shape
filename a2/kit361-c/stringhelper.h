@@ -57,6 +57,7 @@ std::vector<std::vector<std::string>> extractParameters(std::string& line){
 	std::string command = getFirstWord(line);
 	std::string param = line.substr(command.length() + 1, line.length() - (command.length() + 1));
 	std::vector<std::vector<std::string>> result;
+	result.push_back({ command });
 	param.erase(remove_if(param.begin(), param.end(), 
 		[](char x) {
 			return std::isspace(x) || x == '(';

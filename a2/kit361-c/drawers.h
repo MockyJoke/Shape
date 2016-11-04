@@ -231,4 +231,11 @@ public:
 		}
 
 	}
+	void drawTriangle_blerp(vector<ColorPoint2D> threePoints) {
+		drawTriangle_blerp({
+			pair<Point2D,Color>(Point2D(threePoints[0].x,threePoints[0].y),threePoints[0].color),
+			pair<Point2D,Color>(Point2D(threePoints[1].x,threePoints[1].y),threePoints[1].color),
+			pair<Point2D,Color>(Point2D(threePoints[2].x,threePoints[2].y),threePoints[2].color),
+		});
+	}
 };

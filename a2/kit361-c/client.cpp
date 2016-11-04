@@ -11,7 +11,7 @@ Client::Client(Drawable *drawable)
 
 
 void Client::nextPage() {
-    static int pageNumber = 1;
+    static int pageNumber = 2;
     pageNumber++;
     std::cout << "PageNumber " << pageNumber << std::endl;
 	Point2D topLeft(50, 50);
@@ -63,16 +63,15 @@ void Client::draw_page1(Pane pane)
 void Client::draw_page2(Pane pane)
 {
 	TriangleDrawer drawer(drawable);
-	DDA_Drawer lineDrawer(drawable);
 
-	ShapeHelper::draw_squaredShiftedTriangle(pane, &drawer, &lineDrawer);
+	ShapeHelper::draw_squaredShiftedTriangle(pane, &drawer);
 }
 
 void Client::draw_page3(Pane pane) {
 	std::ifstream simpFileStream;
 	simpFileStream.open("simp.txt");
 	SimpReader reader(&simpFileStream);
-	reader.Run();
+	reader.Run(pane, drawable);
 }
 
 void Client::draw_page4(Pane pane)
@@ -85,4 +84,24 @@ void Client::draw_page5(Pane pane)
 
 void Client::draw_page6(Pane pane)
 {
+	std::ifstream simpFileStream;
+	simpFileStream.open("test1.simp");
+	SimpReader reader(&simpFileStream);
+	reader.Run(pane, drawable);
+}
+
+void Client::draw_page7(Pane pane)
+{
+	std::ifstream simpFileStream;
+	simpFileStream.open("test2.simp");
+	SimpReader reader(&simpFileStream);
+	reader.Run(pane, drawable);
+}
+
+void Client::draw_page8(Pane pane)
+{
+	std::ifstream simpFileStream;
+	simpFileStream.open("test3.simp");
+	SimpReader reader(&simpFileStream);
+	reader.Run(pane, drawable);
 }
