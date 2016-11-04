@@ -11,7 +11,7 @@ Client::Client(Drawable *drawable)
 
 
 void Client::nextPage() {
-    static int pageNumber = 0;
+    static int pageNumber = 1;
     pageNumber++;
     std::cout << "PageNumber " << pageNumber << std::endl;
 	Point2D topLeft(50, 50);
@@ -26,6 +26,10 @@ void Client::nextPage() {
         drawable->updateScreen();   // you must call this to make the display change.
         break;
     case 2:
+		draw_rect(0, 0, 750, 750, Color::WHITE);
+		draw_rect(50, 50, 700, 700, Color::BLACK);
+		draw_page2(drawPane);
+		drawable->updateScreen();  
         break;
     case 3:
 		draw_rect(0, 0, 750, 750, Color::WHITE);
@@ -58,6 +62,10 @@ void Client::draw_page1(Pane pane)
 
 void Client::draw_page2(Pane pane)
 {
+	TriangleDrawer drawer(drawable);
+	DDA_Drawer lineDrawer(drawable);
+
+	ShapeHelper::draw_squaredShiftedTriangle(pane, &drawer, &lineDrawer);
 }
 
 void Client::draw_page3(Pane pane) {

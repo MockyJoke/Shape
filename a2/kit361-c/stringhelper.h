@@ -27,7 +27,7 @@ static inline std::string &trim(std::string &s) {
 
 //
 static inline std::string getFirstWord(std::string& s) {
-	int endPos=s.find_first_of(' ');
+	size_t endPos=s.find_first_of(' ');
 	std::string word = s.substr(0, endPos);
 	return word;
 }

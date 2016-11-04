@@ -1,5 +1,7 @@
 #pragma once
 #include <random>
+#include <tuple>
+using namespace std;
 class Color {
 private:
 	std::default_random_engine generator;
@@ -26,7 +28,7 @@ public:
 
 		com.push_back(255);
 		for (int i = 1; i < 4; i++) {
-			unsigned int y = com1[i] + percent * (com2[i] - com1[i]);
+			unsigned int y = (uint32_t)round(com1[i] + percent * (com2[i] - com1[i]));
 			com.push_back(y);
 		}
 		uint32_t c = Color::FromARGB(com[0], com[1], com[2], com[3]);
@@ -96,5 +98,42 @@ public:
 	Pane(Point2D pane_topLeft, Point2D pane_botRight) {
 		topLeft = pane_topLeft;
 		botRight = pane_botRight;
+	}
+};
+
+class Line {
+public:
+	Point2D p1;
+	Point2D p2;
+	Color c1;
+	Color c2;
+
+	Line(Point2D p1, Point2D p2) :p1(p1), p2(p2) {
+	}
+	Line(Point2D p1, Point2D p2, Color c1, Color c2) :p1(p1), p2(p2), c1(c1), c2(c2) {
+	}
+	Line(pair<Point2D, Color> p1, pair<Point2D, Color> p2) 
+		:Line(p1.first, p2.first, p1.second, p2.second) {
+	}
+	Point2D GetHrizontalXPoint(int y) {
+		if (p1.x == p2.x) {
+			return Point2D(p1.x, y);
+		}
+		double m = static_cast<double>(p2.y - p1.y) / static_cast<double>(p2.x - p1.x);
+		double b = static_cast<double>(p1.y) - m * p1.x;
+		int x = static_cast<int>((y - b) / m);
+		return Point2D(x, y);
+	}
+
+	std::pair<Point2D,Color> GetHrizontalXPoint_blerp(int y) {
+		if (p1.x == p2.x) {
+			return pair<Point2D, Color>(Point2D(p1.x, y), c1);
+		}
+		double m = static_cast<double>(p2.y - p1.y) / static_cast<double>(p2.x - p1.x);
+		double b = static_cast<double>(p1.y) - m * p1.x;
+		int x = static_cast<int>((y - b) / m);
+		double percent = static_cast<double>(y - p1.y) / (p2.y - p1.y);
+		Color c = Color::FromLerp(c1.color, c2.color, percent);
+		return pair<Point2D, Color>(Point2D(x, y), c);
 	}
 };
