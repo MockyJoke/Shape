@@ -6,11 +6,11 @@
 class Client : public PageTurner
 {
 public:
-    Client(Drawable *_drawerable);
+    Client(Drawable *_drawable);
     void nextPage();
 
 private:
-    Drawable *_drawerable;
+    Drawable *_drawable;
     void draw_rect(int x1, int y1, int x2, int y2, unsigned int color);
 	void draw_page1(Pane pane);
 	void draw_page2(Pane pane);

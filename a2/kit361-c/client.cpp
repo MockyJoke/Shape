@@ -4,9 +4,9 @@
 #include "drawers.h"
 #include "shapeHelper.h"
 
-Client::Client(Drawable *_drawerable)
+Client::Client(Drawable *_drawable)
 {
-    this->_drawerable = _drawerable;
+    this->_drawable = _drawable;
 }
 
 
@@ -23,50 +23,50 @@ void Client::nextPage() {
         draw_rect(0, 0, 750, 750, Color::WHITE);
         draw_rect( 50,  50, 700, 700, Color::BLACK);
 		draw_page1(drawPane);
-        _drawerable->updateScreen();   // you must call this to make the display change.
+        _drawable->updateScreen();   // you must call this to make the display change.
         break;
     case 2:
 		draw_rect(0, 0, 750, 750, Color::WHITE);
 		draw_rect(50, 50, 700, 700, Color::BLACK);
 		draw_page2(drawPane);
-		_drawerable->updateScreen();  
+		_drawable->updateScreen();  
         break;
     case 3:
 		draw_rect(0, 0, 750, 750, Color::WHITE);
 		draw_rect(50, 50, 700, 700, Color::BLACK);
 		draw_page3(drawPane);
-		_drawerable->updateScreen();   // you must call this to make the display change.
+		_drawable->updateScreen();   // you must call this to make the display change.
         break;
     case 4:
 		draw_rect(0, 0, 750, 750, Color::WHITE);
 		draw_rect(50, 50, 700, 700, Color::BLACK);
 		draw_page4(drawPane);
-		_drawerable->updateScreen();  
+		_drawable->updateScreen();  
 		break;
     default:
         draw_rect(0, 0, 750, 750, 0xffffffff);
         draw_rect(400, 400, 700, 700, 0xff00ff40);
-        _drawerable->updateScreen();
+        _drawable->updateScreen();
     }
 }
 
 void Client::draw_rect(int x1, int y1, int x2, int y2, unsigned int color) {
     for(int x = x1; x<x2; x++) {
         for(int y=y1; y<y2; y++) {
-            _drawerable->setPixel(x, y, color);
+            _drawable->setPixel(x, y, color);
         }
     }
 }
 
 void Client::draw_page1(Pane pane)
 {
-	DDA_Drawer drawer(_drawerable);
+	DDA_Drawer drawer(_drawable);
 	ShapeHelper::draw_squaredShiftedTriangleLines(pane, &drawer);
 }
 
 void Client::draw_page2(Pane pane)
 {
-	TriangleDrawer drawer(_drawerable);
+	TriangleDrawer drawer(_drawable);
 
 	ShapeHelper::draw_squaredShiftedTriangle(pane, &drawer);
 }
@@ -75,7 +75,7 @@ void Client::draw_page3(Pane pane) {
 	std::ifstream simpFileStream;
 	simpFileStream.open("p3_4.txt");
 	SimpReader reader(&simpFileStream);
-	reader.Run(pane, _drawerable, ColorMode::DepthCue_BW);
+	reader.Run(pane, _drawable, ColorMode::DepthCue_BW);
 }
 
 void Client::draw_page4(Pane pane)
@@ -83,7 +83,7 @@ void Client::draw_page4(Pane pane)
 	std::ifstream simpFileStream;
 	simpFileStream.open("p3_4.txt");
 	SimpReader reader(&simpFileStream);
-	reader.Run(pane, _drawerable, ColorMode::DpethCue_Fix);
+	reader.Run(pane, _drawable, ColorMode::DepthCue_Fix);
 }
 
 void Client::draw_page5(Pane pane)
@@ -91,7 +91,7 @@ void Client::draw_page5(Pane pane)
 	std::ifstream simpFileStream;
 	simpFileStream.open("p5.txt");
 	SimpReader reader(&simpFileStream);
-	reader.Run(pane, _drawerable, ColorMode::Random);
+	reader.Run(pane, _drawable, ColorMode::DepthCue_Fix);
 }
 
 void Client::draw_page6(Pane pane)
@@ -99,7 +99,7 @@ void Client::draw_page6(Pane pane)
 	std::ifstream simpFileStream;
 	simpFileStream.open("test1.simp");
 	SimpReader reader(&simpFileStream);
-	reader.Run(pane, _drawerable);
+	reader.Run(pane, _drawable);
 }
 
 void Client::draw_page7(Pane pane)
@@ -107,7 +107,7 @@ void Client::draw_page7(Pane pane)
 	std::ifstream simpFileStream;
 	simpFileStream.open("test2.simp");
 	SimpReader reader(&simpFileStream);
-	reader.Run(pane, _drawerable);
+	reader.Run(pane, _drawable);
 }
 
 void Client::draw_page8(Pane pane)
@@ -115,5 +115,5 @@ void Client::draw_page8(Pane pane)
 	std::ifstream simpFileStream;
 	simpFileStream.open("test3.simp");
 	SimpReader reader(&simpFileStream);
-	reader.Run(pane, _drawerable);
+	reader.Run(pane, _drawable);
 }

@@ -10,8 +10,8 @@ class LineDrawer
 protected:
 	Drawable* _drawable;
 public:
-	LineDrawer(Drawable* _drawerable) {
-		this->_drawable = _drawerable;
+	LineDrawer(Drawable* _drawable) {
+		this->_drawable = _drawable;
 	}
 	~LineDrawer() {
 
@@ -19,16 +19,16 @@ public:
 	virtual void draw_line(int x1, int y1, int x2, int y2, unsigned int color) = 0;
 	virtual void draw_line_lerp(int x1, int y1, int x2, int y2, unsigned int color1, unsigned int color2) = 0;
 	virtual void draw_line_lerp(Point2D p1, Point2D p2, unsigned int color1, unsigned int color2) = 0;
-	virtual void draw_line_lerp_ex(int x1, int y1, int x2, int y2, unsigned int color1, unsigned int color2, function<void(int, int, unsigned int)> prePixelSetAction) = 0;
-	virtual void draw_line_lerp_ex(Point2D p1, Point2D p2, unsigned int color1, unsigned int color2, function<void(int, int, unsigned int)> prePixelSetAction) = 0;
+	//virtual void draw_line_lerp_ex(int x1, int y1, int x2, int y2, unsigned int color1, unsigned int color2, function<void(int, int, unsigned int)> prePixelSetAction) = 0;
+	//virtual void draw_line_lerp_ex(Point2D p1, Point2D p2, unsigned int color1, unsigned int color2, function<void(int, int, unsigned int)> prePixelSetAction) = 0;
 
 };
 
 class DDA_Drawer : public LineDrawer
 {
 public:
-	DDA_Drawer(Drawable* _drawerable)
-		: LineDrawer(_drawerable) {
+	DDA_Drawer(Drawable* _drawable)
+		: LineDrawer(_drawable) {
 
 	}
 	~DDA_Drawer() {
@@ -93,7 +93,7 @@ public:
 	void draw_line_lerp(ColorPoint2D p1, ColorPoint2D p2) {
 		draw_line_lerp(p1.x, p1.y, p2.x, p2.y, p1.color.color, p2.color.color);
 	}
-
+	/*
 	void draw_line_lerp_ex(int x1, int y1, int x2, int y2, unsigned int color1, unsigned int color2, function<void(int, int, unsigned int)> prePixelSetAction) {
 		double m = static_cast<double>(y2 - y1) / static_cast<double>(x2 - x1);
 		double b = y1 - m*x1;
@@ -128,7 +128,9 @@ public:
 	void draw_line_lerp_ex(Point2D p1, Point2D p2, unsigned int color1, unsigned int color2, function<void(int, int, unsigned int)> prePixelSetAction) {
 		draw_line_lerp_ex(p1.x, p1.y, p2.x, p2.y, color1, color2, prePixelSetAction);
 	}
+	*/
 };
+
 
 class TriangleDrawer {
 private:
@@ -169,7 +171,6 @@ private:
 		_drawable->setPixel(x2, y, c2.color);
 
 	}
-
 	void draw_horizontalTriangle_blerp(std::vector<std::pair<Point2D,Color>> threePoints) {
 		if (threePoints[1].first.y == threePoints[2].first.y) {
 			Line leftLine(threePoints[0], threePoints[1]);
@@ -192,9 +193,10 @@ private:
 
 
 	}
+
 public:
-	TriangleDrawer(Drawable* _drawerable)
-		:_drawable(_drawerable) {
+	TriangleDrawer(Drawable* _drawable)
+		:_drawable(_drawable) {
 	}
 	void drawTriangle(std::vector<Point2D> threePoints, unsigned int color) {
 		std::sort(threePoints.begin(), threePoints.end(), [](Point2D p1, Point2D p2) {
@@ -214,32 +216,15 @@ public:
 
 	}
 
-	void drawBlerpTriangle(std::vector<std::pair<Point2D,Color>> threePoints, LineDrawer* lineDrawer) {
-		if (threePoints.size() != 3) {
-			return;
-		}
-		lineDrawer->draw_line_lerp_ex(threePoints[1].first,
-			threePoints[2].first,
-			threePoints[1].second.color,
-			threePoints[2].second.color,
-			[lineDrawer,&threePoints](int x, int y, Color c){
-				lineDrawer->draw_line_lerp(threePoints[0].first, Point2D(x, y), threePoints[0].second.color, c.color);
-			}
-		);
-
-	}
-
 	void drawTriangle_blerp(std::vector<std::pair<Point2D, Color>> threePoints) {
 		std::sort(threePoints.begin(), threePoints.end(), [](std::pair<Point2D, Color> p1, std::pair<Point2D, Color> p2) {
 			return p1.first.y < p2.first.y;
 		});
 		if (threePoints[1].first.y != threePoints[2].first.y) {
-
 			Line line(threePoints[0], threePoints[2]);
 			auto p4 = line.GetHrizontalXPoint_blerp(threePoints[1].first.y);
 			draw_horizontalTriangle_blerp({ p4,threePoints[1],threePoints[2] });
 			draw_horizontalTriangle_blerp({ threePoints[0],threePoints[1],p4 });
-
 		}
 		else {
 			draw_horizontalTriangle_blerp({ threePoints[0],threePoints[1],threePoints[2] });

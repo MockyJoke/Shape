@@ -81,6 +81,15 @@ public:
 		};
 		drawer->drawLine(transformedPoints[0], transformedPoints[1], colorMode);
 	}
+	static void drawLine3d_Clip(Pane pane, Drawable* drawable, ColorPoint3D p1, ColorPoint3D p2, Matrix transMatrix, ColorMode colorMode) {
+		DDA_Clip_Drawer3D drawer(drawable);
+		ViewBox viewBox(-100, 100, -100, 100, 0, 200);
+		vector<ColorPoint3D> transformedPoints{
+			ColorPoint3D(transMatrix * p1.GetMatrix()),
+			ColorPoint3D(transMatrix * p2.GetMatrix())
+		};
+		drawer.drawLine_Clip(transformedPoints[0], transformedPoints[1], colorMode, GetDrawTransformMatrix(pane), viewBox);
+	}
 
 	static void drawTriangle3D(Pane pane, TriangleDrawer3D* drawer, vector<ColorPoint3D> threePoints, Matrix transMatrix, ColorMode colorMode) {
 		//ViewBox viewBox(-100, 100, -100, 100, 0, 200);
@@ -97,8 +106,21 @@ public:
 		drawer->drawTriangle(transformedPoints, colorMode);
 	}
 
-	static Matrix GetDrawTransformMatrix(Pane pane) {
+	static void drawTriangle3D_Clip(Pane pane, Drawable* drawable, vector<ColorPoint3D> threePoints, Matrix transMatrix, ColorMode colorMode) {
 		ViewBox viewBox(-100, 100, -100, 100, 0, 200);
+		Matrix drawTransformMatrx = GetDrawTransformMatrix(pane);
+		TriangleDrawer3D_Clip drawer = TriangleDrawer3D_Clip(drawable, viewBox, &drawTransformMatrx);
+		vector<ColorPoint3D> transformedPoints{
+			ColorPoint3D(transMatrix * threePoints[0].GetMatrix()),
+			ColorPoint3D(transMatrix * threePoints[1].GetMatrix()),
+			ColorPoint3D(transMatrix * threePoints[2].GetMatrix()),
+		};
+		drawer.drawTriangle_clip(threePoints, colorMode);
+	}
+
+
+	static Matrix GetDrawTransformMatrix(Pane pane) {
+		
 		Point2D mid = Point2D::GetMidPoint(pane.topLeft, pane.botRight);
 		Matrix m_s = Matrix::GetScaleMatrix(650 / 200.0, -1 * 650 / 200.0, 1);
 		Matrix m_t = Matrix::GetTranslateMatrix(mid.x, mid.y, 0);

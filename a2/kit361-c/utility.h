@@ -7,6 +7,9 @@
 
 
 using namespace std;
+int inline lerp(int v1, int v2, double percent) {
+	return (int)round(v1 + percent * (v2 - v1));
+}
 class Color {
 private:
 	
@@ -177,6 +180,24 @@ public:
 	}
 };
 
+class ViewBox {
+public:
+	int x_min;
+	int x_max;
+	int y_min;
+	int y_max;
+	int z_min;
+	int z_max;
+	ViewBox() {
+
+	}
+	ViewBox(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max)
+		: x_min(x_min), x_max(x_max), y_min(y_min), y_max(y_max), z_min(z_min), z_max(z_max) {
+
+	}
+};
+
+
 class Point2D
 {
 public:
@@ -246,6 +267,7 @@ public:
 		w = (int)m.data[3][0];
 	}
 
+
 	Matrix GetMatrix() {
 		Matrix m(4, 1);
 		m.data[0][0] = x;
@@ -273,9 +295,32 @@ public:
 	ColorPoint3D(int x, int y, int z, Color color):
 		Point3D(x,y,z),color(color){
 	}
+	ColorPoint3D(ColorPoint2D p, int z) {
+		x = p.x;
+		y = p.y;
+		this->z = z;
+		color = p.color;
+	}
+
 	ColorPoint3D(Matrix m):
 		Point3D(m)
 	{
+	}
+	ColorPoint2D Get2DPoint() {
+		return ColorPoint2D(x, y);
+	}
+	
+	bool isInViewBox(ViewBox box) {
+		if (x<box.x_min || x>box.x_max) {
+			return false;
+		}
+		if (y<box.y_min || y>box.y_max) {
+			return false;
+		}
+		if (z<box.z_min || z>box.z_max) {
+			return false;
+		}
+		return true;
 	}
 
 };
@@ -291,19 +336,6 @@ public:
 	}
 };
 
-struct ViewBox {
-public:
-	int x_min;
-	int x_max;
-	int y_min;
-	int y_max;
-	int z_min;
-	int z_max;
-	ViewBox(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max) 
-		: x_min(x_min), x_max(x_max), y_min(y_min), y_max(y_max), z_min(z_min), z_max(z_max) {
-
-	}
-};
 
 class Line {
 public:
@@ -313,22 +345,13 @@ public:
 	Color c2;
 
 	Line(Point2D p1, Point2D p2) :p1(p1), p2(p2) {
-		checkSwap();
 	}
 	Line(Point2D p1, Point2D p2, Color c1, Color c2) :p1(p1), p2(p2), c1(c1), c2(c2) {
-		checkSwap();
 	}
 	Line(pair<Point2D, Color> p1, pair<Point2D, Color> p2) 
 		:Line(p1.first, p2.first, p1.second, p2.second) {
-		checkSwap();
+	}
 
-	}
-	void checkSwap() {
-		/*if (p1.y < p2.y) {
-			swap(p1, p2);
-			swap(c1, c2);
-		}*/
-	}
 	Point2D GetHrizontalXPoint(int y) {
 		if (p1.x == p2.x) {
 			return Point2D(p1.x, y);
@@ -352,5 +375,43 @@ public:
 		double percent = static_cast<double>(y - p1.y) / (p2.y - p1.y);
 		Color c = Color::FromLerp(c1.color, c2.color, percent);
 		return pair<Point2D, Color>(Point2D(x, y), c);
+	}
+};
+
+class Line3D {
+public:
+	ColorPoint3D p1;
+	ColorPoint3D p2;
+	Line3D(ColorPoint3D p1, ColorPoint3D p2) :p1(p1), p2(p2) {
+	}
+
+
+	Point3D GetHrizontalXPoint(int y) {
+		if (p1.x == p2.x) {
+			return p1;
+		}
+		double m = static_cast<double>(p2.y - p1.y) / static_cast<double>(p2.x - p1.x);
+		double b = static_cast<double>(p1.y) - m * p1.x;
+		int x = static_cast<int>((y - b) / m);
+		double percent = double(x - p1.x) / (p2.x - p1.x);
+		int z = lerp(p1.z, p2.z, percent);
+		return Point3D(x,y,z);
+	}
+
+	ColorPoint3D GetHrizontalXPoint_blerp(int y) {
+		if (p1.x == p2.x) {
+			//return pair<Point2D, Color>(Point2D(p1.x, y), c1);
+			double percent = static_cast<double>(y - p1.y) / (p2.y - p1.y);
+			Color c = Color::FromLerp(p1.color.color, p2.color.color, percent);
+			int z = lerp(p1.z, p2.z, percent);
+			return ColorPoint3D(p1.x, y, z, c);
+		}
+		double m = static_cast<double>(p2.y - p1.y) / static_cast<double>(p2.x - p1.x);
+		double b = static_cast<double>(p1.y) - m * p1.x;
+		int x = static_cast<int>((y - b) / m);
+		double percent = static_cast<double>(y - p1.y) / (p2.y - p1.y);
+		int z = lerp(p1.z, p2.z, percent);
+		Color c = Color::FromLerp(p1.color.color, p2.color.color, percent);
+		return ColorPoint3D(x, y, z, c);
 	}
 };

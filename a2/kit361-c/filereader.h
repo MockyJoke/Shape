@@ -9,6 +9,10 @@
 #include "shapeHelper.h"
 using namespace std;
 
+class MeshReader {
+
+};
+
 class SimpReader{
 private:
 	ifstream* fileStream;
@@ -21,7 +25,7 @@ public:
 		this->fileStream = fileStream;
 	}
 
-	void Run(Pane pane,Drawable* _drawerable, ColorMode colorMode = ColorMode::DepthCue_BW) {
+	void Run(Pane pane,Drawable* _drawable, ColorMode colorMode = ColorMode::DepthCue_BW) {
 		string lineBuf;
 		Matrix transMatrix = Matrix::GetIdentityMatrix(4);
 		stack<Matrix> matrixStack = stack<Matrix>();
@@ -73,9 +77,10 @@ public:
 				ColorPoint3D p3 = ColorPoint3D(stoi(params[3][0]),
 					stoi(params[3][1]),
 					stoi(params[3][2]));
-				TriangleDrawer3D drawer(_drawerable);
+				TriangleDrawer3D drawer(_drawable);
 				ShapeHelper3D::drawTriangle3D(pane, &drawer, { p1,p2,p3 }, transMatrix, colorMode);
 				//drawable->updateScreen();   // you must call this to make the display change.
+				//ShapeHelper3D::drawTriangle3D_Clip(pane, _drawable, { p1,p2,p3 }, transMatrix, colorMode);
 			}
 			else if (words[0] == "line") {
 
@@ -86,10 +91,9 @@ public:
 				ColorPoint3D p2 = ColorPoint3D(stoi(params[2][0]),
 					stoi(params[2][1]),
 					stoi(params[2][2]));
-				DDA_Drawer3D drawer(_drawerable);
-
+				DDA_Drawer3D drawer(_drawable);
 				ShapeHelper3D::drawLine3d(pane, &drawer, p1, p2, transMatrix, colorMode);
-
+				//ShapeHelper3D::drawLine3d_Clip(pane, _drawable, p1, p2, transMatrix, colorMode);
 			}
 			else if (words[0] == "mesh") {
 				//string param = line.substr(line.find_first_of(' '), line.length() - 7);
@@ -110,3 +114,4 @@ public:
 		}
 	}
 };
+
