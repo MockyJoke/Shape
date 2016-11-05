@@ -415,3 +415,23 @@ public:
 		return ColorPoint3D(x, y, z, c);
 	}
 };
+class MeshNet {
+public:
+	ColorPoint3D** data;
+	int Rows;
+	int Cols;
+	MeshNet(int rows,int cols) {
+		Rows = rows;
+		Cols = cols;
+		data = new ColorPoint3D*[Rows];
+		for (int i = 0; i < Rows; i++) {
+			data[i] = new ColorPoint3D[Cols];
+		}
+	}
+	~MeshNet() {
+		for (int i = 0; i < Rows; i++) {
+			delete[] data[i];
+		}
+		delete[] data;
+	}
+};

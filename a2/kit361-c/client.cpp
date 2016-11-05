@@ -17,7 +17,7 @@ void Client::nextPage() {
 	Point2D topLeft(50, 50);
 	Point2D botRight(700, 700);
 	Pane drawPane(topLeft, botRight);
-	pageNumber = 4;
+	
     switch(pageNumber % 8) {
     case 1:
         draw_rect(0, 0, 750, 750, Color::WHITE);
@@ -42,6 +42,30 @@ void Client::nextPage() {
 		draw_rect(50, 50, 700, 700, Color::BLACK);
 		draw_page4(drawPane);
 		_drawable->updateScreen();  
+		break;
+	case 5:
+		draw_rect(0, 0, 750, 750, Color::WHITE);
+		draw_rect(50, 50, 700, 700, Color::BLACK);
+		draw_page5(drawPane);
+		_drawable->updateScreen();
+		break;
+	case 6:
+		draw_rect(0, 0, 750, 750, Color::WHITE);
+		draw_rect(50, 50, 700, 700, Color::BLACK);
+		draw_page6(drawPane);
+		_drawable->updateScreen();
+		break;
+	case 7:
+		draw_rect(0, 0, 750, 750, Color::WHITE);
+		draw_rect(50, 50, 700, 700, Color::BLACK);
+		draw_page7(drawPane);
+		_drawable->updateScreen();
+		break;
+	case 8:
+		draw_rect(0, 0, 750, 750, Color::WHITE);
+		draw_rect(50, 50, 700, 700, Color::BLACK);
+		draw_page8(drawPane);
+		_drawable->updateScreen();
 		break;
     default:
         draw_rect(0, 0, 750, 750, 0xffffffff);

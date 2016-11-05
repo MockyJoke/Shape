@@ -10,9 +10,63 @@
 using namespace std;
 
 class MeshReader {
+private:
+	ifstream* fileStream;
+public:
+	MeshReader() {
+		fileStream = nullptr;
+	}
+	MeshReader(ifstream* fileStream) {
+		this->fileStream = fileStream;
+	}
+	void Run(Pane pane, Drawable* _drawable, ColorMode colorMode = ColorMode::DepthCue_BW) {
+		string lineBuf;
+		Matrix transMatrix = Matrix::GetIdentityMatrix(4);
 
+		// Get Cols
+		getline(*fileStream, lineBuf);
+		string line = trim(lineBuf);
+		auto l = split(line, ' ');
+		int cols = std::stoi(line);
+		// Get Rows
+		getline(*fileStream, lineBuf);
+		line = trim(lineBuf);
+		int rows = std::stoi(line);
+		MeshNet mesh(rows, cols);
+
+		while (!fileStream->eof()) {
+			getline(*fileStream, lineBuf);
+			string line = trim(lineBuf);
+			if (line[0] == '#' || line.length() == 0) {
+				continue;
+			}
+			bool found = false;
+			string buffer;
+			int num[3];
+			int index = 0;
+			for (int i = 0; i < line.length(); i++) {
+				if (isspace(line[i])) {
+					if (found) {
+						found = false;
+						num[index % 3] = stoi(buffer);
+						buffer = "";
+						index++;
+						if (index != 0 && index % 3 == 0) {
+							ColorPoint3D p(num[0], num[1], num[2]);
+							mesh.data[index / mesh.Cols][index% mesh.Cols] = p;
+						}
+					}
+				}
+				else {
+					found = true;
+					buffer = buffer + line[i];
+
+				}
+			}
+		}
+	}
 };
-
+enum DrawMode { Fill, Wireframe };
 class SimpReader{
 private:
 	ifstream* fileStream;
@@ -26,6 +80,7 @@ public:
 	}
 
 	void Run(Pane pane,Drawable* _drawable, ColorMode colorMode = ColorMode::DepthCue_BW) {
+		DrawMode drawMode;
 		string lineBuf;
 		Matrix transMatrix = Matrix::GetIdentityMatrix(4);
 		stack<Matrix> matrixStack = stack<Matrix>();
@@ -96,21 +151,25 @@ public:
 				//ShapeHelper3D::drawLine3d_Clip(pane, _drawable, p1, p2, transMatrix, colorMode);
 			}
 			else if (words[0] == "mesh") {
+				auto params = extractParameters(line);
+
+				//std::ifstream meshFileStream;
+				//meshFileStream.open(params[1][0].substr(1, params[1][0].length()-2));
+
+				//MeshReader reader(&meshFileStream);
+				//reader.Run(pane, _drawable, ColorMode::DepthCue_BW);
 				//string param = line.substr(line.find_first_of(' '), line.length() - 7);
 				//auto l = extractParameters(line);
 
 			}
 			else if (words[0] == "wire") {
-				//string param = line.substr(line.find_first_of(' '), line.length() - 7);
-				//auto l = extractParameters(line);
+				drawMode = DrawMode::Wireframe;
 
 			}
 			else if (words[0] == "filled") {
-				//string param = line.substr(line.find_first_of(' '), line.length() - 7);
-				//auto l = extractParameters(line);
-
+				drawMode = DrawMode::Fill;
 			}
-			//transMatrix.PrintMatrix();
+			
 		}
 	}
 };
