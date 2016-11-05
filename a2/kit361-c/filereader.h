@@ -21,7 +21,7 @@ public:
 		this->fileStream = fileStream;
 	}
 
-	void Run(Pane pane,Drawable* drawable) {
+	void Run(Pane pane,Drawable* _drawerable, ColorMode colorMode = ColorMode::DepthCue_BW) {
 		string lineBuf;
 		Matrix transMatrix = Matrix::GetIdentityMatrix(4);
 		stack<Matrix> matrixStack = stack<Matrix>();
@@ -73,9 +73,9 @@ public:
 				ColorPoint3D p3 = ColorPoint3D(stoi(params[3][0]),
 					stoi(params[3][1]),
 					stoi(params[3][2]));
-				TriangleDrawer3D drawer(drawable);
-				ShapeHelper3D::drawTriangle3D(pane, &drawer, { p1,p2,p3 }, transMatrix);
-				drawable->updateScreen();   // you must call this to make the display change.
+				TriangleDrawer3D drawer(_drawerable);
+				ShapeHelper3D::drawTriangle3D(pane, &drawer, { p1,p2,p3 }, transMatrix, colorMode);
+				//drawable->updateScreen();   // you must call this to make the display change.
 			}
 			else if (words[0] == "line") {
 
@@ -86,9 +86,9 @@ public:
 				ColorPoint3D p2 = ColorPoint3D(stoi(params[2][0]),
 					stoi(params[2][1]),
 					stoi(params[2][2]));
-				DDA_Drawer3D drawer(drawable);
+				DDA_Drawer3D drawer(_drawerable);
 
-				ShapeHelper3D::drawLine3d(pane, &drawer, p1, p2, transMatrix);
+				ShapeHelper3D::drawLine3d(pane, &drawer, p1, p2, transMatrix, colorMode);
 
 			}
 			else if (words[0] == "mesh") {

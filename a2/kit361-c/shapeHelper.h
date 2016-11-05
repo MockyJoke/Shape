@@ -72,25 +72,36 @@ public:
 
 class ShapeHelper3D {
 public:
-	static void drawLine3d(Pane pane, LineDrawer3D* drawer, ColorPoint3D p1, ColorPoint3D p2, Matrix transMatrix) {
-		return;
+	static void drawLine3d(Pane pane, LineDrawer3D* drawer, ColorPoint3D p1, ColorPoint3D p2, Matrix transMatrix, ColorMode colorMode) {
+
+		transMatrix = GetDrawTransformMatrix(pane)*transMatrix;
+		vector<ColorPoint3D> transformedPoints{
+			ColorPoint3D(transMatrix * p1.GetMatrix()),
+			ColorPoint3D(transMatrix * p2.GetMatrix())
+		};
+		drawer->drawLine(transformedPoints[0], transformedPoints[1], colorMode);
 	}
 
-	static void drawTriangle3D(Pane pane, TriangleDrawer3D* drawer, vector<ColorPoint3D> threePoints, Matrix transMatrix) {
-		ViewBox viewBox(-100, 100, -100, 100, 0, 200);
-		transMatrix = Matrix::GetRotateMatrix('Z', 0) * transMatrix;
-		Point2D mid = Point2D::GetMidPoint(pane.topLeft, pane.botRight);
-		Matrix m_s = Matrix::GetScaleMatrix(650/200.0,-1*650/200.0,1);
-		Matrix m_t = Matrix::GetTranslateMatrix(mid.x, mid.y, 0);
-		
-		transMatrix = m_t*(m_s*transMatrix);
-		
-		transMatrix.PrintMatrix();
+	static void drawTriangle3D(Pane pane, TriangleDrawer3D* drawer, vector<ColorPoint3D> threePoints, Matrix transMatrix, ColorMode colorMode) {
+		//ViewBox viewBox(-100, 100, -100, 100, 0, 200);
+		//transMatrix = transMatrix*Matrix::GetRotateMatrix('Y', 0);
+
+		transMatrix = GetDrawTransformMatrix(pane)*transMatrix;
+
+		//transMatrix.PrintMatrix();
 		vector<ColorPoint3D> transformedPoints;
 		for (auto& p : threePoints) {
 			transformedPoints.push_back(ColorPoint3D(Matrix::Multiply(transMatrix, p.GetMatrix())));
 		}
 
-		drawer->drawTriangle(transformedPoints);
+		drawer->drawTriangle(transformedPoints, colorMode);
+	}
+
+	static Matrix GetDrawTransformMatrix(Pane pane) {
+		ViewBox viewBox(-100, 100, -100, 100, 0, 200);
+		Point2D mid = Point2D::GetMidPoint(pane.topLeft, pane.botRight);
+		Matrix m_s = Matrix::GetScaleMatrix(650 / 200.0, -1 * 650 / 200.0, 1);
+		Matrix m_t = Matrix::GetTranslateMatrix(mid.x, mid.y, 0);
+		return m_t*m_s;
 	}
 };

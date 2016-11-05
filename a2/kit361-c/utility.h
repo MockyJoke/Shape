@@ -9,6 +9,7 @@
 using namespace std;
 class Color {
 private:
+	
 	std::default_random_engine generator;
 	std::uniform_int_distribution<unsigned int> distribution_color;
 public:
@@ -64,6 +65,10 @@ public:
 			distribution_color(generator),
 			distribution_color(generator));
 		return color;
+	}
+	void reSeed() {
+		std::random_device r;
+		generator = std::default_random_engine(r());
 	}
 };
 

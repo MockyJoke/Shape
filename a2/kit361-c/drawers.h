@@ -10,8 +10,8 @@ class LineDrawer
 protected:
 	Drawable* _drawable;
 public:
-	LineDrawer(Drawable* drawable) {
-		this->_drawable = drawable;
+	LineDrawer(Drawable* _drawerable) {
+		this->_drawable = _drawerable;
 	}
 	~LineDrawer() {
 
@@ -27,8 +27,8 @@ public:
 class DDA_Drawer : public LineDrawer
 {
 public:
-	DDA_Drawer(Drawable* drawable)
-		: LineDrawer(drawable) {
+	DDA_Drawer(Drawable* _drawerable)
+		: LineDrawer(_drawerable) {
 
 	}
 	~DDA_Drawer() {
@@ -54,6 +54,17 @@ public:
 	}
 
 	void draw_line_lerp(int x1, int y1, int x2, int y2, unsigned int color1, unsigned int color2) {
+		if (x1 == x2) {
+			// vertical line 
+			for (int y = y1; y != y2; y1 < y2 ? y++ : y--)
+			{
+				double percent = static_cast<double>(y - y1) / (y2 - y1);
+				unsigned int color = Color::FromLerp(color1, color2, percent);
+
+				_drawable->setPixel(x1, y, color);
+			}
+			return;
+		}
 		double m = static_cast<double>(y2 - y1) / static_cast<double>(x2 - x1);
 		double b = y1 - m*x1;
 		if (abs(m) <= 1) {
@@ -79,6 +90,10 @@ public:
 	void draw_line_lerp(Point2D p1, Point2D p2, unsigned int color1, unsigned int color2) {
 		draw_line_lerp(p1.x, p1.y, p2.x, p2.y, color1, color2);
 	}
+	void draw_line_lerp(ColorPoint2D p1, ColorPoint2D p2) {
+		draw_line_lerp(p1.x, p1.y, p2.x, p2.y, p1.color.color, p2.color.color);
+	}
+
 	void draw_line_lerp_ex(int x1, int y1, int x2, int y2, unsigned int color1, unsigned int color2, function<void(int, int, unsigned int)> prePixelSetAction) {
 		double m = static_cast<double>(y2 - y1) / static_cast<double>(x2 - x1);
 		double b = y1 - m*x1;
@@ -178,8 +193,8 @@ private:
 
 	}
 public:
-	TriangleDrawer(Drawable* drawable)
-		:_drawable(drawable) {
+	TriangleDrawer(Drawable* _drawerable)
+		:_drawable(_drawerable) {
 	}
 	void drawTriangle(std::vector<Point2D> threePoints, unsigned int color) {
 		std::sort(threePoints.begin(), threePoints.end(), [](Point2D p1, Point2D p2) {

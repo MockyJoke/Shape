@@ -187,6 +187,8 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <Text Include="p3_4.txt" />
+    <Text Include="p5.txt" />
     <Text Include="simp.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
