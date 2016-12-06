@@ -67,6 +67,7 @@ public:
 	}
 };
 enum DrawMode { Fill, Wireframe };
+enum RenderStyle { Phong, Gouraud, Flat };
 class SimpReader{
 private:
 	ifstream* fileStream;
@@ -81,6 +82,7 @@ public:
 
 	void Run(Pane pane,Drawable* _drawable, ColorMode colorMode = ColorMode::DepthCue_BW) {
 		DrawMode drawMode;
+		RenderStyle renderStyle;
 		string lineBuf;
 		Matrix transMatrix = Matrix::GetIdentityMatrix(4);
 		stack<Matrix> matrixStack = stack<Matrix>();
@@ -100,7 +102,8 @@ public:
 				matrixStack.pop();
 				continue;
 			}
-			vector<string> words = split(line, ' ');
+			//vector<string> words = split(line, ' ');
+			vector<string> words = parseSimpLine(line);
 			if (words[0] == "scale") {
 				Matrix m = Matrix::GetScaleMatrix(
 					stod(words[1]),
@@ -169,7 +172,27 @@ public:
 			else if (words[0] == "filled") {
 				drawMode = DrawMode::Fill;
 			}
-			
+			else if (words[0] == "camera") {
+
+			}
+			else if (words[0] == "light") {
+
+			}
+			else if (words[0] == "surface") {
+
+			}
+			else if (words[0] == "ambient") {
+
+			}
+			else if (words[0] == "phong") {
+				renderStyle == RenderStyle::Phong;
+			}
+			else if (words[0] == "gouraud") {
+				renderStyle == RenderStyle::Gouraud;
+			}
+			else if (words[0] == "flat") {
+				renderStyle == RenderStyle::Flat;
+			}
 		}
 	}
 };

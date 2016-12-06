@@ -11,7 +11,7 @@ Client::Client(Drawable *_drawable)
 
 
 void Client::nextPage() {
-    static int pageNumber = 0;
+    static int pageNumber = 2;
     pageNumber++;
     std::cout << "PageNumber " << pageNumber << std::endl;
 	Point2D topLeft(50, 50);
@@ -84,15 +84,19 @@ void Client::draw_rect(int x1, int y1, int x2, int y2, unsigned int color) {
 
 void Client::draw_page1(Pane pane)
 {
-	DDA_Drawer drawer(_drawable);
-	ShapeHelper::draw_squaredShiftedTriangleLines(pane, &drawer);
+	/*DDA_Drawer drawer(_drawable);
+	ShapeHelper::draw_squaredShiftedTriangleLines(pane, &drawer);*/
+	std::ifstream simpFileStream;
+	simpFileStream.open("simp1.txt");
+	SimpReader reader(&simpFileStream);
+	reader.Run(pane, _drawable, ColorMode::DepthCue_BW);
 }
 
 void Client::draw_page2(Pane pane)
 {
 	TriangleDrawer drawer(_drawable);
 
-	ShapeHelper::draw_squaredShiftedTriangle(pane, &drawer);
+	//ShapeHelper::draw_squaredShiftedTriangle(pane, &drawer);
 }
 
 void Client::draw_page3(Pane pane) {

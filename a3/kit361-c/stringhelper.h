@@ -69,3 +69,13 @@ std::vector<std::vector<std::string>> extractParameters(std::string& line){
 	}
 	return result;
 }
+
+std::vector<std::string> parseSimpLine(std::string& line) {
+	std::vector<std::string> params = {};
+	stringstream ss(line);
+	string tmp;
+	while (ss>>tmp) {
+		params.push_back(tmp);
+	}
+	return params;
+}
