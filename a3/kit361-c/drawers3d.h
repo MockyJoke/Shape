@@ -95,7 +95,7 @@ private:
 				ColorPoint3D p(x, (int)y, z);
 				if (p.isInViewBox(viewBox)) {
 					unsigned int color = Color::FromLerp(p1.color.color, p2.color.color, percent);
-					ColorPoint3D targetPoint = ColorPoint3D(drawTransMatrix * p.GetMatrix());
+					ColorPoint3D targetPoint = ColorPoint3D(drawTransMatrix * p.GetMatrix(),p.color);
 					_drawable->setPixel(targetPoint.x, targetPoint.y, color);
 
 				}

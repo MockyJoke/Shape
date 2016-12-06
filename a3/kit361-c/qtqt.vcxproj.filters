@@ -96,6 +96,12 @@
     <ClInclude Include="drawers3d.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="projection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="depthdrawers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="simp.txt" />

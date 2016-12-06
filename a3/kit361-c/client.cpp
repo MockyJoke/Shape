@@ -3,6 +3,7 @@
 #include "filereader.h"
 #include "drawers.h"
 #include "shapeHelper.h"
+#include "projection.h"
 
 Client::Client(Drawable *_drawable)
 {
@@ -11,7 +12,7 @@ Client::Client(Drawable *_drawable)
 
 
 void Client::nextPage() {
-    static int pageNumber = 2;
+    static int pageNumber = 0;
     pageNumber++;
     std::cout << "PageNumber " << pageNumber << std::endl;
 	Point2D topLeft(50, 50);

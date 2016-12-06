@@ -45,7 +45,7 @@ public:
 	}
 
 
-	unsigned color;
+	unsigned int color;
 	Color() {
 		distribution_color = std::uniform_int_distribution<unsigned int>(0, 255);
 		color = Color::FromARGB(255,
@@ -289,7 +289,7 @@ public:
 	}
 	ColorPoint3D(int x, int y, int z ) :
 		Point3D(x, y, z) {
-		color = Color::BLACK;
+		color = Color::GREEN;
 	}
 
 	ColorPoint3D(int x, int y, int z, Color color):
@@ -302,9 +302,10 @@ public:
 		color = p.color;
 	}
 
-	ColorPoint3D(Matrix m):
-		Point3D(m)
+	ColorPoint3D(Matrix m,Color color=Color::BLUE):
+		Point3D(m),color(color)
 	{
+		
 	}
 	ColorPoint2D Get2DPoint() {
 		return ColorPoint2D(x, y);
@@ -330,6 +331,9 @@ class Pane {
 public:
 	Point2D topLeft;
 	Point2D botRight;
+	Pane() {
+
+	}
 	Pane(Point2D pane_topLeft, Point2D pane_botRight) {
 		topLeft = pane_topLeft;
 		botRight = pane_botRight;
@@ -400,7 +404,7 @@ public:
 
 	ColorPoint3D GetHrizontalXPoint_blerp(int y) {
 		if (p1.x == p2.x) {
-			//return pair<Point2D, Color>(Point2D(p1.x, y), c1);
+			//Line is vertical
 			double percent = static_cast<double>(y - p1.y) / (p2.y - p1.y);
 			Color c = Color::FromLerp(p1.color.color, p2.color.color, percent);
 			int z = lerp(p1.z, p2.z, percent);
@@ -410,6 +414,23 @@ public:
 		double b = static_cast<double>(p1.y) - m * p1.x;
 		int x = static_cast<int>((y - b) / m);
 		double percent = static_cast<double>(y - p1.y) / (p2.y - p1.y);
+		int z = lerp(p1.z, p2.z, percent);
+		Color c = Color::FromLerp(p1.color.color, p2.color.color, percent);
+		return ColorPoint3D(x, y, z, c);
+	}
+
+	ColorPoint3D GetVerticalXPoint_blerp(int x) {
+		if (p1.y == p2.y) {
+			//Line is horizontal
+			double percent = static_cast<double>(x - p1.x) / (p2.x - p1.x);
+			Color c = Color::FromLerp(p1.color.color, p2.color.color, percent);
+			int z = lerp(p1.z, p2.z, percent);
+			return ColorPoint3D(x, p1.y, z, c);
+		}
+		double m = static_cast<double>(p2.y - p1.y) / static_cast<double>(p2.x - p1.x);
+		double b = static_cast<double>(p1.y) - m * p1.x;
+		int y = static_cast<int>(m*x + b);
+		double percent = static_cast<double>(x - p1.x) / (p2.x - p1.x);
 		int z = lerp(p1.z, p2.z, percent);
 		Color c = Color::FromLerp(p1.color.color, p2.color.color, percent);
 		return ColorPoint3D(x, y, z, c);

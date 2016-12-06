@@ -7,6 +7,9 @@
 #include <cmath>
 #include "utility.h"
 #include "shapeHelper.h"
+#include "projection.h"
+#include "depthdrawers.h"
+
 using namespace std;
 
 class MeshReader {
@@ -80,7 +83,8 @@ public:
 		this->fileStream = fileStream;
 	}
 
-	void Run(Pane pane,Drawable* _drawable, ColorMode colorMode = ColorMode::DepthCue_BW) {
+	void Run(Pane pane, Drawable* _drawable, ColorMode colorMode = ColorMode::DepthCue_BW) {
+		DepthScene scene(pane, _drawable);
 		DrawMode drawMode;
 		RenderStyle renderStyle;
 		string lineBuf;
@@ -135,8 +139,11 @@ public:
 				ColorPoint3D p3 = ColorPoint3D(stoi(params[3][0]),
 					stoi(params[3][1]),
 					stoi(params[3][2]));
-				TriangleDrawer3D drawer(_drawable);
-				ShapeHelper3D::drawTriangle3D(pane, &drawer, { p1,p2,p3 }, transMatrix, colorMode);
+
+				DepthTriangleDrawer3D drawer(&scene);
+				drawer.drawTriangle3D({ p1,p2,p3 }, transMatrix);
+				//TriangleDrawer3D drawer(_drawable);
+				//ShapeHelper3D::drawTriangle3D(pane, &drawer, { p1,p2,p3 }, transMatrix, colorMode);
 				//drawable->updateScreen();   // you must call this to make the display change.
 				//ShapeHelper3D::drawTriangle3D_Clip(pane, _drawable, { p1,p2,p3 }, transMatrix, colorMode);
 			}
@@ -185,13 +192,13 @@ public:
 
 			}
 			else if (words[0] == "phong") {
-				renderStyle == RenderStyle::Phong;
+				renderStyle = RenderStyle::Phong;
 			}
 			else if (words[0] == "gouraud") {
-				renderStyle == RenderStyle::Gouraud;
+				renderStyle = RenderStyle::Gouraud;
 			}
 			else if (words[0] == "flat") {
-				renderStyle == RenderStyle::Flat;
+				renderStyle = RenderStyle::Flat;
 			}
 		}
 	}
