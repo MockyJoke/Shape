@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{885F8E57-CAD2-381B-83C3-A84AE2114DA4}</ProjectGuid>
+    <ProjectGuid>{A9BAF638-2263-3C98-AF30-4E4B724ECF97}</ProjectGuid>
     <RootNamespace>qtqt</RootNamespace>
     <Keyword>Qt4VSv1.0</Keyword>
   </PropertyGroup>
@@ -158,7 +158,13 @@
   <ItemGroup>
     <ClInclude Include="client.h" />
     <ClInclude Include="drawable.h" />
+    <ClInclude Include="drawers.h" />
+    <ClInclude Include="drawers3d.h" />
+    <ClInclude Include="filereader.h" />
     <ClInclude Include="pageturner.h" />
+    <ClInclude Include="shapeHelper.h" />
+    <ClInclude Include="stringhelper.h" />
+    <ClInclude Include="utility.h" />
     <CustomBuild Include="renderarea361.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-IC:\Qt\Qt5.7.0\5.7\msvc2015_64\include" "-IC:\Qt\Qt5.7.0\5.7\msvc2015_64\include\QtWidgets" "-IC:\Qt\Qt5.7.0\5.7\msvc2015_64\include\QtGui" "-IC:\Qt\Qt5.7.0\5.7\msvc2015_64\include\QtANGLE" "-IC:\Qt\Qt5.7.0\5.7\msvc2015_64\include\QtCore" "-I.\release" "-IC:\Qt\Qt5.7.0\5.7\msvc2015_64\mkspecs\win32-msvc2015"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing renderarea361.h...</Message>
@@ -179,6 +185,14 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="p3_4.txt" />
+    <Text Include="p5.txt" />
+    <Text Include="simp.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="longform" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

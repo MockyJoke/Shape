@@ -26,12 +26,12 @@
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Generated Files\Debug">
-      <UniqueIdentifier>{b5376387-7690-4179-8fb0-019673a6f3f7}</UniqueIdentifier>
+      <UniqueIdentifier>{3a6d8280-8636-4bc1-ab4d-8f368c0188f4}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
     <Filter Include="Generated Files\Release">
-      <UniqueIdentifier>{49155522-717b-4343-b444-1f698aa329e1}</UniqueIdentifier>
+      <UniqueIdentifier>{e8e8c63e-d3ec-4c1c-aa55-2f242ed22aef}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
@@ -78,5 +78,31 @@
     <CustomBuild Include="window361.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <ClInclude Include="utility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="filereader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stringhelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="drawers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="shapeHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="drawers3d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="simp.txt" />
+    <Text Include="p3_4.txt" />
+    <Text Include="p5.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="longform" />
   </ItemGroup>
 </Project>
