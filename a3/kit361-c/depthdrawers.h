@@ -84,7 +84,7 @@ public :
 		vector<ColorPoint3D> transformedPoints;
 		
 		Color c;
-		//c.reSeed();
+		c.reSeed();
 		//transMatrix.PrintMatrix();
 		for (auto& p : threePoints) {
 			//p.color = c.randNextColor();
@@ -92,7 +92,9 @@ public :
 			Matrix m = transMatrix* p.GetMatrix();
 			m.PrintMatrix();
 			ColorPoint3D point = ColorPoint3D(m, p.color);
-			point.z = (1-m.data[2][0]/ m.data[3][0])*(camera->z_far - camera->z_near);
+			//point.z = (point.z)*(camera->z_near - camera->z_far);
+			point.z = (1+m.data[2][0]/ m.data[3][0])*0.5*(camera->z_near - camera->z_far);
+			//point.color = c.randNextColor();
 			point.color = Color::FromLerp(Color::WHITE, Color::BLACK, point.z / 200.0);
 
 			transformedPoints.push_back(point);

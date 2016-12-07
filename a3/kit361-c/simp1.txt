@@ -1,13 +1,14 @@
 {
 	#camera -10 -10 10 10 20 100
 	camera -100 -100 100 100 59 200
+    rotate X 40
 	translate 20 -30 60
 	#polygon (0, 0, 0) ( 90, 0, 0) (90, 90, 0)
-	scale 7 7 1
+	scale 6 6 1
 	#polygon (0, 0, 25) ( 25, 0, 25) (25, 25, 25)
-	#rotate Z -15
+	#rotate Z 45
 	#rotate Y -10
-	#rotate X -10
+	
 	polygon (0, 0, 25) ( 25, 0, 25) (25, 25, 25)
 	polygon (0, 0, 25) ( 0, 25, 25) (25, 25, 25)
 	polygon (0, 0, 25) ( 0, 25, 100) (0, 0, 100)

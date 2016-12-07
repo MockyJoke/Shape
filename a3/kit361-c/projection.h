@@ -77,7 +77,7 @@ public:
 	void setPixel(ColorPoint3D point) {
 		if (IsPointInScene(point)) {
 			if (z_buffer->SetAt(point.x, point.y, point.z, point.color.color)) {
-				drawable->setPixel(point.x, point.y, point.color.color);
+				//drawable->setPixel(point.x, point.y, point.color.color);
 			}
 		}
 	}
@@ -89,7 +89,18 @@ public:
 		if (IsPointInScene(pt)) {
 			point = pt;
 			if (z_buffer->SetAt(point.x, point.y, point.z, point.color.color)) {
-				drawable->setPixel(point.x, point.y, point.color.color);
+				//drawable->setPixel(point.x, point.y, point.color.color);
+			}
+		}
+	}
+
+	void render_all() {
+		for (int i = pane.topLeft.x; i < pane.botRight.x; i++) {
+			for (int j = pane.topLeft.y; j < pane.botRight.y; j++) {
+				pair<int, unsigned int> value = z_buffer->GetAt(i, j);
+				if (value.first != INT_MAX) {
+					drawable->setPixel(i, j, value.second);
+				}
 			}
 		}
 	}
@@ -99,6 +110,9 @@ public:
 			return false;
 		}
 		else if (point.y<pane.topLeft.y || point.y>=pane.botRight.y) {
+			return false;
+		}
+		else if (point.z<camera.z_near*-1 || point.z > camera.z_far*-1) {
 			return false;
 		}
 		else {

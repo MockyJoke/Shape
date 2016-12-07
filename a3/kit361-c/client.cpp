@@ -12,8 +12,8 @@ Client::Client(Drawable *_drawable)
 
 
 void Client::nextPage() {
-    static int pageNumber = 0;
-    pageNumber++;
+    static int pageNumber = 1;
+    //pageNumber++;
     std::cout << "PageNumber " << pageNumber << std::endl;
 	Point2D topLeft(50, 50);
 	Point2D botRight(700, 700);

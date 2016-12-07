@@ -189,7 +189,7 @@ public:
 				cam.z_near = -stoi(words[5]);
 				cam.z_far = -stoi(words[6]);
 				camera = cam;
-
+				scene.SetCamera(cam);
 			}
 			else if (words[0] == "light") {
 
@@ -210,6 +210,7 @@ public:
 				renderStyle = RenderStyle::Flat;
 			}
 		}
+		scene.render_all();
 	}
 };
 
