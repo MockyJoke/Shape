@@ -4,12 +4,31 @@
 #ifdef _WINDOWS
 #include "windows.h"
 #endif // _WINDOWS
-
-
 using namespace std;
 int inline lerp(int v1, int v2, double percent) {
 	return (int)round(v1 + percent * (v2 - v1));
 }
+class Camera {
+public:
+	double x_low;
+	double y_low;
+	double x_high;
+	double y_high;
+	double z_near;
+	double z_far;
+	//void setProjectionMatrix(const float &angleOfView, const float &near, const float &far, Matrix &M)
+	//{
+	//	Matrix M(4,4);
+	//	// set the basic projection matrix
+	//	float scale = 1 / tan(angleOfView * 0.5 * M_PI / 180);
+	//	M[0][0] = scale; // scale the x coordinates of the projected point 
+	//	M[1][1] = scale; // scale the y coordinates of the projected point 
+	//	M[2][2] = -far / (far - near); // used to remap z to [0,1] 
+	//	M[3][2] = -far * near / (far - near); // used to remap z [0,1] 
+	//	M[2][3] = -1; // set w = -z 
+	//	M[3][3] = 0;
+	//}
+};
 class Color {
 private:
 	
@@ -161,6 +180,22 @@ public:
 		return m;
 	}
 
+	static Matrix GetPerspectiveMatrix(Camera* cam) {
+		Matrix m(4, 4);
+		m.data[0][0] = cam->z_near * 2 / (cam->x_high - cam->x_low);
+		m.data[0][2] = (cam->x_high + cam->x_low) / (cam->x_high - cam->x_low);
+
+		m.data[1][1] = (cam->z_near * 2) / (cam->y_high - cam->y_low);
+		m.data[1][2] = (cam->y_high + cam->y_low) / (cam->y_high - cam->y_low);
+
+		m.data[2][2] = -1.0* (cam->z_far + cam->z_near) / (cam->z_far - cam->z_near);
+		m.data[2][3] = (-2.0 *cam->z_far * cam->z_near) / (cam->z_far - cam->z_near);
+
+		m.data[3][2] = -1;
+		//m.PrintMatrix();
+		return m;
+	}
+
 	Matrix operator* (const Matrix& m) {
 		return Multiply(*this, m);
 	}
@@ -247,7 +282,7 @@ public:
 	int x;
 	int y;
 	int z;
-	double w;
+	int w;
 	Point3D() {
 		x = 0;
 		y = 0;
@@ -261,10 +296,12 @@ public:
 	}
 
 	Point3D(Matrix m){
-		x = (int)m.data[0][0];
-		y = (int)m.data[1][0];
-		z = (int)m.data[2][0];
-		w = (int)m.data[3][0];
+		double W = m.data[3][0];
+		x = m.data[0][0]/W;
+		y = m.data[1][0]/W;
+		z = m.data[2][0]/W;
+		w = m.data[3][0]/W;
+		
 	}
 
 
@@ -456,3 +493,4 @@ public:
 		delete[] data;
 	}
 };
+

@@ -193,6 +193,7 @@
     <Text Include="p5.txt" />
     <Text Include="simp.txt" />
     <Text Include="simp1.txt" />
+    <Text Include="simp2.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="longform" />

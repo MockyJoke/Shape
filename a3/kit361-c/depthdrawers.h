@@ -69,19 +69,35 @@ private:
 
 public :
 	DepthScene* scene;
-	DepthTriangleDrawer3D (DepthScene* scene) {
+	Camera* camera;
+	DepthTriangleDrawer3D (DepthScene* scene, Camera* camera) {
 		this->scene = scene;
+		this->camera = camera;
 	}
 	void drawTriangle3D(vector<ColorPoint3D> threePoints, Matrix transMatrix) {
-
+		Matrix perspecMatrix = Matrix::GetPerspectiveMatrix(camera);
+		Matrix expand = Matrix::GetScaleMatrix(0.5*(camera->x_high - camera->x_low),0.5*( camera->y_high - camera->y_low), 1);
+		perspecMatrix.PrintMatrix();
+		transMatrix = expand*(perspecMatrix *transMatrix);
 		transMatrix = scene->GetDrawTransformMatrix()*transMatrix;
+		//transMatrix.PrintMatrix();
 		vector<ColorPoint3D> transformedPoints;
+		
 		Color c;
-		c.reSeed();
+		//c.reSeed();
+		//transMatrix.PrintMatrix();
 		for (auto& p : threePoints) {
-			p.color = c.randNextColor();
-			transformedPoints.push_back(ColorPoint3D(Matrix::Multiply(transMatrix, p.GetMatrix()), p.color));
+			//p.color = c.randNextColor();
+
+			Matrix m = transMatrix* p.GetMatrix();
+			m.PrintMatrix();
+			ColorPoint3D point = ColorPoint3D(m, p.color);
+			point.z = (1-m.data[2][0]/ m.data[3][0])*(camera->z_far - camera->z_near);
+			point.color = Color::FromLerp(Color::WHITE, Color::BLACK, point.z / 200.0);
+
+			transformedPoints.push_back(point);
 		}
+		
 		drawTriangle_blerp(transformedPoints);
 	}
 

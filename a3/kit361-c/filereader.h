@@ -85,6 +85,7 @@ public:
 
 	void Run(Pane pane, Drawable* _drawable, ColorMode colorMode = ColorMode::DepthCue_BW) {
 		DepthScene scene(pane, _drawable);
+		Camera camera;
 		DrawMode drawMode;
 		RenderStyle renderStyle;
 		string lineBuf;
@@ -140,7 +141,7 @@ public:
 					stoi(params[3][1]),
 					stoi(params[3][2]));
 
-				DepthTriangleDrawer3D drawer(&scene);
+				DepthTriangleDrawer3D drawer(&scene, &camera);
 				drawer.drawTriangle3D({ p1,p2,p3 }, transMatrix);
 				//TriangleDrawer3D drawer(_drawable);
 				//ShapeHelper3D::drawTriangle3D(pane, &drawer, { p1,p2,p3 }, transMatrix, colorMode);
@@ -180,6 +181,14 @@ public:
 				drawMode = DrawMode::Fill;
 			}
 			else if (words[0] == "camera") {
+				Camera cam;
+				cam.x_low = stoi(words[1]);
+				cam.y_low = stoi(words[2]);
+				cam.x_high = stoi(words[3]);
+				cam.y_high = stoi(words[4]);
+				cam.z_near = -stoi(words[5]);
+				cam.z_far = -stoi(words[6]);
+				camera = cam;
 
 			}
 			else if (words[0] == "light") {

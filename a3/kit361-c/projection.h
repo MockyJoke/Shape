@@ -4,6 +4,7 @@
 #include <tuple>
 
 using namespace std;
+
 class DepthBuffer {
 public:
 	pair<int, unsigned int>** data;
@@ -51,8 +52,9 @@ class DepthScene {
 	DepthBuffer* z_buffer;
 	Pane pane;
 	Drawable* drawable;
+	Camera camera;
 public:
-
+	
 	DepthScene(Pane pane, Drawable* drawable) {
 		this->pane = pane;
 		this->drawable = drawable;
@@ -79,6 +81,18 @@ public:
 			}
 		}
 	}
+	void setPixel_Spect(ColorPoint3D point, Camera* camera) {
+		Matrix perspecMatrix =  Matrix::GetPerspectiveMatrix(camera);
+		perspecMatrix.PrintMatrix();
+		ColorPoint3D pt(perspecMatrix*point.GetMatrix(), point.color);
+
+		if (IsPointInScene(pt)) {
+			point = pt;
+			if (z_buffer->SetAt(point.x, point.y, point.z, point.color.color)) {
+				drawable->setPixel(point.x, point.y, point.color.color);
+			}
+		}
+	}
 
 	bool IsPointInScene(Point3D point) {
 		if (point.x<pane.topLeft.x || point.x>=pane.botRight.x) {
@@ -91,11 +105,15 @@ public:
 			return true;
 		}
 	}
+	
+	void SetCamera(Camera cam) {
+		camera = cam;
+	}
 
 	Matrix GetDrawTransformMatrix() {
 		Point2D mid = Point2D::GetMidPoint(pane.topLeft, pane.botRight);
-		Matrix m_s = Matrix::GetScaleMatrix(650 / 200.0, -1 * 650 / 200.0, 1);
+		Matrix m_s = Matrix::GetScaleMatrix(650 / 200.0, -1 * 650/ 200.0, 1);
 		Matrix m_t = Matrix::GetTranslateMatrix(mid.x, mid.y, 0);
-		return m_t*m_s;
+		return m_t;
 	}
 };
