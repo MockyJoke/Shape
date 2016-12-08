@@ -20,9 +20,17 @@ int main(int argc, char *argv[])
     Drawable *sheet = window.getDrawable();
 
     Client client(sheet);           // the client (your program) gets a (Drawable *)
+	if (argc > 1) {
+		client.fileName = argv[1];
+	}
+	else {
+		client.fileName = "simp1.txt";
+
+	}
     window.setPageTurner(&client);  // the window must be given a (PageTurner *)
                                     // I made the client a PageTurner, but it doesn't have to
                                     // be that way.
+	
     return app.exec();
 }
 

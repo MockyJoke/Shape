@@ -189,6 +189,7 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <Text Include="mesh1.txt" />
     <Text Include="p3_4.txt" />
     <Text Include="p5.txt" />
     <Text Include="simp.txt" />

@@ -71,7 +71,7 @@ public:
 };
 enum DrawMode { Fill, Wireframe };
 enum RenderStyle { Phong, Gouraud, Flat };
-class SimpReader{
+class SimpReader {
 private:
 	ifstream* fileStream;
 public:
@@ -137,7 +137,15 @@ public:
 				transMatrix = Matrix::Multiply(m, transMatrix);
 			}
 			else if (words[0] == "polygon") {
-				auto params = extractParameters(line);
+				vector<vector<string>> params;
+				vector<vector<double>> normals;
+				bool hasNormal = false;
+				if (contains(line, "[")) {
+					hasNormal = true;
+					normals = extractNormals_Polygon(line);
+				}
+				params = extractParameters(line);
+
 				ColorPoint3D p1 = ColorPoint3D(stoi(params[1][0]),
 					stoi(params[1][1]),
 					stoi(params[1][2]));
@@ -147,22 +155,41 @@ public:
 				ColorPoint3D p3 = ColorPoint3D(stoi(params[3][0]),
 					stoi(params[3][1]),
 					stoi(params[3][2]));
-				
 
-				//Normal not supplied
-				D3Vector<double> left = D3Vector<double>(p2.x - p1.x, p2.y - p1.y, p2.z - p1.z);
-				D3Vector<double> right = D3Vector<double>(p3.x - p1.x, p3.y - p1.y, p3.z - p1.z);
-				D3Vector<double> avgNomal = left.crossproduct(right);
-				avgNomal.Normalize();
-				p1.SetNormalVector(avgNomal);
-				p2.SetNormalVector(avgNomal);
-				p3.SetNormalVector(avgNomal);
-
+				if (params[1].size() > 3) {
+					p1.SetSurfaceColor(Color::FromNormalizedRGB(stod(params[1][3]),
+						stod(params[1][4]),
+						stod(params[1][5])));
+					p2.SetSurfaceColor(Color::FromNormalizedRGB(stod(params[2][3]),
+						stod(params[2][4]),
+						stod(params[2][5])));
+					p3.SetSurfaceColor(Color::FromNormalizedRGB(stod(params[3][3]),
+						stod(params[3][4]),
+						stod(params[3][5])));
+				}
+				if (hasNormal) {
+					D3Vector<double> v1 = D3Vector<double>(normals[0][1], normals[0][2], normals[0][2]);
+					D3Vector<double> v2 = D3Vector<double>(normals[1][1], normals[1][2], normals[1][2]);
+					D3Vector<double> v3 = D3Vector<double>(normals[2][1], normals[2][2], normals[2][2]);
+					p1.SetNormalVector(v1);
+					p2.SetNormalVector(v2);
+					p3.SetNormalVector(v3);
+				}
+				else {
+					//Normal not supplied
+					D3Vector<double> left = D3Vector<double>(p2.x - p1.x, p2.y - p1.y, p2.z - p1.z);
+					D3Vector<double> right = D3Vector<double>(p3.x - p1.x, p3.y - p1.y, p3.z - p1.z);
+					D3Vector<double> avgNomal = left.crossproduct(right);
+					avgNomal.Normalize();
+					p1.SetNormalVector(avgNomal);
+					p2.SetNormalVector(avgNomal);
+					p3.SetNormalVector(avgNomal);
+				}
 				//p1.color = lightParam.GetLightColor(p1);
 				//p2.color = lightParam.GetLightColor(p2);
 				//p3.color = lightParam.GetLightColor(p3);
 
-				DepthTriangleDrawer3D drawer(&scene, &camera,&lightParam);
+				DepthTriangleDrawer3D drawer(&scene, &camera, &lightParam);
 				drawer.drawTriangle3D({ p1,p2,p3 }, transMatrix);
 				//TriangleDrawer3D drawer(_drawable);
 				//ShapeHelper3D::drawTriangle3D(pane, &drawer, { p1,p2,p3 }, transMatrix, colorMode);
@@ -214,7 +241,7 @@ public:
 			}
 			else if (words[0] == "light") {
 				LightSource ls;
-				ls.red= stod(words[1]);
+				ls.red = stod(words[1]);
 				ls.green = stod(words[2]);
 				ls.blue = stod(words[3]);
 				ls.a = stod(words[4]);
@@ -234,7 +261,7 @@ public:
 			else if (words[0] == "ambient") {
 				AmbientLight al;
 				auto params = extractParameters(line);
-				al.red= stod(params[1][0]);
+				al.red = stod(params[1][0]);
 				al.green = stod(params[1][1]);
 				al.blue = stod(params[1][2]);
 				lightParam.ambientLight = al;

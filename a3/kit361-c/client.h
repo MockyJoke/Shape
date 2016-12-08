@@ -3,12 +3,13 @@
 #include "drawable.h"
 #include "pageturner.h"
 #include "utility.h"
+#include <string>
 class Client : public PageTurner
 {
 public:
     Client(Drawable *_drawable);
     void nextPage();
-
+	string fileName;
 private:
     Drawable *_drawable;
     void draw_rect(int x1, int y1, int x2, int y2, unsigned int color);

@@ -88,7 +88,7 @@ void Client::draw_page1(Pane pane)
 	/*DDA_Drawer drawer(_drawable);
 	ShapeHelper::draw_squaredShiftedTriangleLines(pane, &drawer);*/
 	std::ifstream simpFileStream;
-	simpFileStream.open("simp2.txt");
+	simpFileStream.open(fileName);
 	SimpReader reader(&simpFileStream);
 	reader.Run(pane, _drawable, ColorMode::DepthCue_BW);
 }

@@ -543,28 +543,36 @@ class ColorPoint3D : public Point3D
 {
 public:
 	Color color;
+	Color surfaceColor;
+	bool hasSurfaceColor;
 	ColorPoint3D() :Point3D() {
 		color = 0;
+		hasSurfaceColor = false;
 	}
 	ColorPoint3D(int x, int y, int z) :
 		Point3D(x, y, z) {
 		color = Color::GREEN;
+		hasSurfaceColor = false;
 	}
 
 	ColorPoint3D(int x, int y, int z, Color color) :
 		Point3D(x, y, z), color(color) {
+		hasSurfaceColor = false;
 	}
+
 	ColorPoint3D(ColorPoint2D p, int z) {
 		x = p.x;
 		y = p.y;
 		this->z = z;
 		color = p.color;
+		hasSurfaceColor = false;
 	}
 
 	ColorPoint3D(Matrix m, Color color = Color::BLUE) :
 		Point3D(m), color(color)
 	{
 	}
+
 	ColorPoint2D Get2DPoint() {
 		return ColorPoint2D(x, y);
 	}
@@ -586,9 +594,14 @@ public:
 		//m.PrintMatrix();
 		ColorPoint3D p(m);
 		p.color = this->color;
+		p.surfaceColor = this->surfaceColor;
 		p.SetNormalVector(this->normalVector);
 		p.hasNormal = this->hasNormal;
 		return p;
+	}
+	void SetSurfaceColor(Color sc) {
+		surfaceColor = sc;
+		hasSurfaceColor = true;
 	}
 
 };
@@ -748,7 +761,7 @@ public:
 			double f_atti = 1.0 / (ls.a + ls.b*distance);
 			LightSource temp = ls * f_atti;
 
-			NormLight pointColor = surfaceLight;
+			NormLight pointColor = point.hasSurfaceColor ? point.surfaceColor.ToNormalizedRGB() : surfaceLight;
 			D3Vector<double> lightVector = D3Vector<double>(point.x, point.y, point.z);
 			lightVector.Normalize();
 			point.normalVector.Normalize();

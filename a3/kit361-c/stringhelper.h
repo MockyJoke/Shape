@@ -43,6 +43,10 @@ std::vector<std::string> split(const std::string &s, char delim) {
 	return strings;
 }
 
+//contains
+bool contains(const std::string& subject, std::string substring) {
+	return (subject.find(substring) != std::string::npos);
+}
 std::string replaceString(std::string subject, const std::string& search,
 	const std::string& replace) {
 	size_t pos = 0;
@@ -95,4 +99,19 @@ std::vector<std::vector<std::string>> extractLine_Surface(std::string& line) {
 	result.push_back(split(paramGroups[1], ' '));
 	
 	return result;
+}
+
+std::vector<std::vector<double>> extractNormals_Polygon(std::string& line) {
+	vector<vector<double>> normals;
+	for (int i = 0; i < 3;i++){
+		size_t pos_n = line.find('n',7);
+		size_t pos_l = line.find('[', pos_n);
+		size_t pos_r = line.find(']', pos_l);
+		string k = line.substr(pos_l+1, pos_r-pos_l);
+		vector<string> comps = split(k,',');
+		vector<double> normal = { stod(comps[0]),stod(comps[1]),stod(comps[1]) };
+		normals.push_back(normal);
+		line.erase(pos_n, k.size()+3);
+	}
+	return normals;
 }
