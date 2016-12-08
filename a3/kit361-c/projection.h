@@ -83,7 +83,7 @@ public:
 	}
 	void setPixel_Spect(ColorPoint3D point, Camera* camera) {
 		Matrix perspecMatrix =  Matrix::GetPerspectiveMatrix(camera);
-		perspecMatrix.PrintMatrix();
+		//perspecMatrix.PrintMatrix();
 		ColorPoint3D pt(perspecMatrix*point.GetMatrix(), point.color);
 
 		if (IsPointInScene(pt)) {
@@ -126,8 +126,8 @@ public:
 
 	Matrix GetDrawTransformMatrix() {
 		Point2D mid = Point2D::GetMidPoint(pane.topLeft, pane.botRight);
-		Matrix m_s = Matrix::GetScaleMatrix(650 / 200.0, -1 * 650/ 200.0, 1);
+		Matrix m_s = Matrix::GetScaleMatrix(1, -1, 1);
 		Matrix m_t = Matrix::GetTranslateMatrix(mid.x, mid.y, 0);
-		return m_t;
+		return m_t*m_s;
 	}
 };

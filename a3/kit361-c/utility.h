@@ -3,8 +3,157 @@
 #include <tuple>
 #ifdef _WINDOWS
 #include "windows.h"
+#include <cmath>
 #endif // _WINDOWS
 using namespace std;
+
+
+template< class T >
+class D3Vector {
+public:
+	bool IsNormalized;
+	D3Vector() {
+		x = 0;
+		y = 0;
+		z = 0;
+		IsNormalized = false;
+	}
+	D3Vector(T a, T b, T c) {
+		x = a;
+		y = b;
+		z = c;
+		IsNormalized = false;
+	}
+
+	T dotproduct(const D3Vector & rhs) {
+		T scalar = x * rhs.x + y * rhs.y + z * rhs.z;
+		return scalar;
+	}
+
+	D3Vector crossproduct(const D3Vector & rhs) {
+		T a = y * rhs.z - z * rhs.y;
+		T b = z * rhs.x - x * rhs.z;
+		T c = x * rhs.y - y * rhs.x;
+		D3Vector product(a, b, c);
+		return product;
+	}
+
+	D3Vector triplevec(D3Vector & a, D3Vector & b) {
+		return crossproduct(a.crossproduct(b));
+	}
+
+	T triplescal(D3Vector & a, D3Vector & b) {
+		return dotproduct(a.crossproduct(b));
+	}
+
+	void Normalize() {
+		if (!IsNormalized) {
+			double d = sqrt(dotproduct(*this));
+			x = x / d;
+			y = y / d;
+			z = z / d;
+			IsNormalized = true;
+		}
+		//return *this;
+	}
+
+private:
+	T x, y, z;
+	
+};
+
+class NormLight {
+public:
+	double red;
+	double green;
+	double blue;
+	NormLight() {
+		red = 0;
+		green = 0;
+		blue = 0;
+	}
+	NormLight(double r, double g, double b) {
+		red = r; 
+		green = g;
+		blue = b;
+	}
+	/*virtual NormLight operator* (const NormLight& l) {
+		NormLight light;
+		light.red = red*l.red;
+		light.green = red*l.green;
+		light.blue = red*l.blue;
+		return light;
+	}*/
+	NormLight operator* (const double& coef) {
+		NormLight light;
+		light.red = red*coef;
+		light.green = green*coef;
+		light.blue = blue*coef;
+		return light;
+	}
+	NormLight operator+ (const NormLight& l) {
+		NormLight light;
+		light.red = red+l.red;
+		light.green = green + l.green;
+		light.blue = blue + l.blue;
+		return light;
+	}
+};
+class SurfaceLight :public NormLight {
+public:
+	
+	double ks;
+	double alpha;
+	SurfaceLight operator* (const NormLight& l) {
+		SurfaceLight light;
+		light.red = red*l.red;
+		light.green = green*l.green;
+		light.blue = blue*l.blue;
+		light.ks = ks;
+		light.alpha = alpha;
+		return light;
+	}
+	SurfaceLight operator* (const double& coef) {
+		SurfaceLight light;
+		light.red = red*coef;
+		light.green = green*coef;
+		light.blue = blue*coef;
+		light.ks = ks;
+		light.alpha = alpha;
+		return light;
+	}
+};
+class AmbientLight :public NormLight {
+public:
+};
+
+
+class LightSource:public NormLight {
+public:
+	double a;
+	double b;
+	LightSource operator* (const NormLight& l) {
+		LightSource light;
+		light.red = red*l.red;
+		light.green = green*l.green;
+		light.blue = blue*l.blue;
+		light.a = a;
+		light.b = b;
+		return light;
+	}
+	LightSource operator* (const double& coef) {
+		LightSource light;
+		light.red = red*coef;
+		light.green = green*coef;
+		light.blue = blue*coef;
+		light.a = a;
+		light.b = b;
+		return light;
+	}
+};
+
+
+
 int inline lerp(int v1, int v2, double percent) {
 	return (int)round(v1 + percent * (v2 - v1));
 }
@@ -47,6 +196,35 @@ public:
 		uint32_t vb = b;
 		uint32_t result = va + vr + vg + vb;
 		return result;
+	}
+	static unsigned int FromNormLight(NormLight normLight) {
+		unsigned int r = normLight.red * 255;
+		unsigned int g = normLight.green * 255;
+		unsigned int b = normLight.blue * 255;
+		unsigned int a = 255;
+		r = r > 255 ? 255 : r;
+		g = g > 255 ? 255 : g;
+		b = b > 255 ? 255 : b;
+		return FromARGB(a, r, g, b);
+	}
+	static unsigned int FromNormalizedRGB(double red, double green, double blue) {
+		unsigned int r = red * 255;
+		unsigned int g = green * 255;
+		unsigned int b = blue * 255;
+		unsigned int a = 255;
+		r = r > 255 ? 255 : r;
+		g = g > 255 ? 255 : g;
+		b = b > 255 ? 255 : b;
+		return FromARGB(a, r, g, b);
+	}
+
+	NormLight ToNormalizedRGB() {
+		vector<int> rgb = GetARGBs();
+		NormLight normColor;
+		normColor.red = rgb[1] / 255.0;
+		normColor.green = rgb[2] / 255.0;
+		normColor.blue = rgb[3] / 255.0;
+		return normColor;
 	}
 
 	static unsigned int FromLerp(unsigned int c1, unsigned int c2,double percent) {
@@ -283,16 +461,20 @@ public:
 	int y;
 	int z;
 	int w;
+	D3Vector<double> normalVector;
+	bool hasNormal;
 	Point3D() {
 		x = 0;
 		y = 0;
 		z = 0;
 		w = 1;
+		hasNormal = false;
 	}
 
 	Point3D(int x, int y,int z)
 		:x(x),y(y),z(z) {
 		w = 1;
+		hasNormal = false;
 	}
 
 	Point3D(Matrix m){
@@ -301,32 +483,54 @@ public:
 		y = m.data[1][0]/W;
 		z = m.data[2][0]/W;
 		w = m.data[3][0]/W;
-		
+		hasNormal = false;
 	}
 
+	Point3D GetNewPointByMatrix(Matrix t) {
+		Matrix m = t*GetMatrix();
+		Point3D p(t);
+		p.SetNormalVector(this->normalVector);
+		p.hasNormal = this->hasNormal;
+		return p;
+	}
 
 	Matrix GetMatrix() {
 		Matrix m(4, 1);
 		m.data[0][0] = x;
 		m.data[1][0] = y;
 		m.data[2][0] = z;
-		m.data[3][0] = w;
+		m.data[3][0] = 1;
 		return m;
 	}
+	void SetNormalVector(D3Vector<double> normal) {
+		normalVector = normal;
+		hasNormal = true;
+	}
 
+	double GetDistanceTo(Point3D p2) {
+		return GetDistanceBetweenPoints(*this, p2);
+	}
+
+	static double GetDistanceBetweenPoints(Point3D p1, Point3D p2) {
+		double power = pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2) + pow(p1.z - p2.z, 2);
+		double distance = sqrt(power);
+		return distance;
+	}
 };
 
 class ColorPoint3D : public Point3D
 {
 public:
 	Color color;
-
+	bool useAmbientLight;
 	ColorPoint3D() :Point3D(){
 		color = 0;
+		useAmbientLight = false;
 	}
 	ColorPoint3D(int x, int y, int z ) :
 		Point3D(x, y, z) {
 		color = Color::GREEN;
+		useAmbientLight = false;
 	}
 
 	ColorPoint3D(int x, int y, int z, Color color):
@@ -337,12 +541,13 @@ public:
 		y = p.y;
 		this->z = z;
 		color = p.color;
+		useAmbientLight = false;
 	}
 
 	ColorPoint3D(Matrix m,Color color=Color::BLUE):
 		Point3D(m),color(color)
 	{
-		
+		useAmbientLight = false;
 	}
 	ColorPoint2D Get2DPoint() {
 		return ColorPoint2D(x, y);
@@ -359,6 +564,15 @@ public:
 			return false;
 		}
 		return true;
+	}
+	ColorPoint3D GetNewPointByMatrix(Matrix t) {
+		Matrix m = t*GetMatrix();
+		//m.PrintMatrix();
+		ColorPoint3D p(m);
+		p.color = this->color;
+		p.SetNormalVector(this->normalVector);
+		p.hasNormal = this->hasNormal;
+		return p;
 	}
 
 };
@@ -494,3 +708,41 @@ public:
 	}
 };
 
+class LightParameters {
+public:
+	SurfaceLight surfaceLight;
+	AmbientLight ambientLight;
+	vector<LightSource> lightSources;
+	unsigned int GetAmbientLightColor() {
+		return Color::FromNormalizedRGB(ambientLight.red, ambientLight.green, ambientLight.blue);
+	}
+
+	unsigned int GetSurfaceLightColor() {
+		return Color::FromNormalizedRGB(surfaceLight.red, surfaceLight.green, surfaceLight.blue);
+	}
+
+	unsigned int GetLightColor(ColorPoint3D point){
+		NormLight ambientLight = surfaceLight*ambientLight;
+		ColorPoint3D origin(0, 0, 0);
+		
+		NormLight sigma;
+		for (int i = 0; i < lightSources.size(); i++) {
+			LightSource ls = lightSources[i];
+			double distance = point.GetDistanceTo(origin);
+			double f_atti = 1.0 / (ls.a + ls.b*distance);
+			LightSource temp = ls * f_atti;
+
+			NormLight pointColor = point.color.ToNormalizedRGB();
+			D3Vector<double> lightVector = D3Vector<double>(-point.x, -point.y, -point.z);
+			lightVector.Normalize();
+			point.normalVector.Normalize();
+			NormLight left = pointColor * point.normalVector.dotproduct(lightVector);
+			NormLight right = NormLight(1, 1, 1)*surfaceLight.ks;
+			NormLight sum = left + right;
+
+			sigma = sigma + temp*sum;
+		}
+		NormLight total = ambientLight + sigma;
+		return Color::FromNormLight(total);
+	}
+};

@@ -85,6 +85,10 @@ public:
 
 	void Run(Pane pane, Drawable* _drawable, ColorMode colorMode = ColorMode::DepthCue_BW) {
 		DepthScene scene(pane, _drawable);
+		LightParameters lightParam;
+		/*vector <LightSource> LightSources = {};
+		SurfaceLight surfaceLight;
+		AmbientLight ambientLight;*/
 		Camera camera;
 		DrawMode drawMode;
 		RenderStyle renderStyle;
@@ -120,7 +124,10 @@ public:
 				Matrix m = Matrix::GetRotateMatrix(
 					words[1][0],
 					stod(words[2]));
+				//m.PrintMatrix();
+				//transMatrix.PrintMatrix();
 				transMatrix = Matrix::Multiply(m, transMatrix);
+				//transMatrix.PrintMatrix();
 			}
 			else if (words[0] == "translate") {
 				Matrix m = Matrix::GetTranslateMatrix(
@@ -140,6 +147,20 @@ public:
 				ColorPoint3D p3 = ColorPoint3D(stoi(params[3][0]),
 					stoi(params[3][1]),
 					stoi(params[3][2]));
+				
+
+				//Normal not supplied
+				D3Vector<double> left = D3Vector<double>(p2.x - p1.x, p2.y - p1.y, p2.z - p1.z);
+				D3Vector<double> right = D3Vector<double>(p3.x - p1.x, p3.y - p1.y, p3.z - p1.z);
+				D3Vector<double> avgNomal = left.crossproduct(right);
+				avgNomal.Normalize();
+				p1.SetNormalVector(avgNomal);
+				p2.SetNormalVector(avgNomal);
+				p3.SetNormalVector(avgNomal);
+
+				p1.color = lightParam.GetLightColor(p1);
+				p2.color = lightParam.GetLightColor(p2);
+				p3.color = lightParam.GetLightColor(p3);
 
 				DepthTriangleDrawer3D drawer(&scene, &camera);
 				drawer.drawTriangle3D({ p1,p2,p3 }, transMatrix);
@@ -192,13 +213,31 @@ public:
 				scene.SetCamera(cam);
 			}
 			else if (words[0] == "light") {
-
+				LightSource ls;
+				ls.red= stod(words[1]);
+				ls.green = stod(words[2]);
+				ls.blue = stod(words[3]);
+				ls.a = stod(words[4]);
+				ls.b = stod(words[5]);
+				lightParam.lightSources.push_back(ls);
 			}
 			else if (words[0] == "surface") {
-
+				auto params = extractLine_Surface(line);
+				SurfaceLight sl;
+				sl.red = stod(params[1][0]);
+				sl.green = stod(params[1][1]);
+				sl.blue = stod(params[1][2]);
+				sl.ks = stod(params[2][1]);
+				sl.alpha = stod(params[2][2]);
+				lightParam.surfaceLight = sl;
 			}
 			else if (words[0] == "ambient") {
-
+				AmbientLight al;
+				auto params = extractParameters(line);
+				al.red= stod(params[1][0]);
+				al.green = stod(params[1][1]);
+				al.blue = stod(params[1][2]);
+				lightParam.ambientLight = al;
 			}
 			else if (words[0] == "phong") {
 				renderStyle = RenderStyle::Phong;

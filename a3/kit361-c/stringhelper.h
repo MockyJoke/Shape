@@ -79,3 +79,20 @@ std::vector<std::string> parseSimpLine(std::string& line) {
 	}
 	return params;
 }
+
+std::vector<std::vector<std::string>> extractLine_Surface(std::string& line) {
+	std::string command = getFirstWord(line);
+	std::string param = line.substr(command.length() + 1, line.length() - (command.length() + 1));
+	std::vector<std::vector<std::string>> result;
+	result.push_back({ command });
+	param.erase(remove_if(param.begin(), param.end(),
+		[](char x) {
+		return x == '(';
+	}), param.end());
+	std::vector<std::string> paramGroups = split(param, ')');
+	
+	result.push_back(split(paramGroups[0], ','));
+	result.push_back(split(paramGroups[1], ' '));
+	
+	return result;
+}

@@ -75,25 +75,33 @@ public :
 		this->camera = camera;
 	}
 	void drawTriangle3D(vector<ColorPoint3D> threePoints, Matrix transMatrix) {
+		//transMatrix = Matrix::GetRotateMatrix('Y', -90);
 		Matrix perspecMatrix = Matrix::GetPerspectiveMatrix(camera);
 		Matrix expand = Matrix::GetScaleMatrix(0.5*(camera->x_high - camera->x_low),0.5*( camera->y_high - camera->y_low), 1);
-		perspecMatrix.PrintMatrix();
-		transMatrix = expand*(perspecMatrix *transMatrix);
-		transMatrix = scene->GetDrawTransformMatrix()*transMatrix;
+		//perspecMatrix.PrintMatrix();
+		//transMatrix = expand*(perspecMatrix *transMatrix);
+		//transMatrix = transMatrix*scene->GetDrawTransformMatrix();
 		//transMatrix.PrintMatrix();
 		vector<ColorPoint3D> transformedPoints;
-		
+		//transMatrix = Matrix::GetRotateMatrix('Y', -180);
+		Matrix sceneMatrix = scene->GetDrawTransformMatrix();
 		Color c;
 		c.reSeed();
 		//transMatrix.PrintMatrix();
+		transMatrix.PrintMatrix();
 		for (auto& p : threePoints) {
 			//p.color = c.randNextColor();
+			ColorPoint3D tmp = p.GetNewPointByMatrix(transMatrix);
+			Matrix m1 = perspecMatrix*tmp.GetMatrix();
+			Matrix m2 = expand*m1;
+			ColorPoint3D tmp2 = ColorPoint3D(m2);
+			tmp2.z = (1 + m2.data[2][0] / m2.data[3][0])*0.5*(camera->z_near - camera->z_far);
 
-			Matrix m = transMatrix* p.GetMatrix();
-			m.PrintMatrix();
-			ColorPoint3D point = ColorPoint3D(m, p.color);
+			ColorPoint3D point = tmp2.GetNewPointByMatrix(sceneMatrix);
+
+
+				
 			//point.z = (point.z)*(camera->z_near - camera->z_far);
-			point.z = (1+m.data[2][0]/ m.data[3][0])*0.5*(camera->z_near - camera->z_far);
 			//point.color = c.randNextColor();
 			point.color = Color::FromLerp(Color::WHITE, Color::BLACK, point.z / 200.0);
 
