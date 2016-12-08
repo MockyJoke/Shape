@@ -126,7 +126,7 @@ public:
 
 	Matrix GetDrawTransformMatrix() {
 		Point2D mid = Point2D::GetMidPoint(pane.topLeft, pane.botRight);
-		Matrix m_s = Matrix::GetScaleMatrix(1, -1, 1);
+		Matrix m_s = Matrix::GetScaleMatrix(650 / 200.0, -1 * 650 / 200.0, 1);
 		Matrix m_t = Matrix::GetTranslateMatrix(mid.x, mid.y, 0);
 		return m_t*m_s;
 	}

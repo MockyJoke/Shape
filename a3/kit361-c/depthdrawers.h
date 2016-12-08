@@ -70,9 +70,11 @@ private:
 public :
 	DepthScene* scene;
 	Camera* camera;
-	DepthTriangleDrawer3D (DepthScene* scene, Camera* camera) {
+	LightParameters* lightParam;
+	DepthTriangleDrawer3D (DepthScene* scene, Camera* camera,LightParameters* lightParam) {
 		this->scene = scene;
 		this->camera = camera;
+		this->lightParam = lightParam;
 	}
 	void drawTriangle3D(vector<ColorPoint3D> threePoints, Matrix transMatrix) {
 		//transMatrix = Matrix::GetRotateMatrix('Y', -90);
@@ -92,6 +94,8 @@ public :
 		for (auto& p : threePoints) {
 			//p.color = c.randNextColor();
 			ColorPoint3D tmp = p.GetNewPointByMatrix(transMatrix);
+			Color c = lightParam->GetLightColor(tmp);
+
 			Matrix m1 = perspecMatrix*tmp.GetMatrix();
 			Matrix m2 = expand*m1;
 			ColorPoint3D tmp2 = ColorPoint3D(m2);
@@ -100,11 +104,11 @@ public :
 			ColorPoint3D point = tmp2.GetNewPointByMatrix(sceneMatrix);
 
 
-				
+			point.color = c;
+			point.color.PrintColor();
 			//point.z = (point.z)*(camera->z_near - camera->z_far);
 			//point.color = c.randNextColor();
-			point.color = Color::FromLerp(Color::WHITE, Color::BLACK, point.z / 200.0);
-
+			//point.color = Color::FromLerp(Color::WHITE, Color::BLACK, point.z / 200.0);
 			transformedPoints.push_back(point);
 		}
 		

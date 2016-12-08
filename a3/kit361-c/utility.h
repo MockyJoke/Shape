@@ -52,6 +52,9 @@ public:
 			x = x / d;
 			y = y / d;
 			z = z / d;
+			x = abs(x);
+			y = abs(y);
+			z = abs(z);
 			IsNormalized = true;
 		}
 		//return *this;
@@ -59,7 +62,7 @@ public:
 
 private:
 	T x, y, z;
-	
+
 };
 
 class NormLight {
@@ -73,7 +76,7 @@ public:
 		blue = 0;
 	}
 	NormLight(double r, double g, double b) {
-		red = r; 
+		red = r;
 		green = g;
 		blue = b;
 	}
@@ -93,15 +96,19 @@ public:
 	}
 	NormLight operator+ (const NormLight& l) {
 		NormLight light;
-		light.red = red+l.red;
+		light.red = red + l.red;
 		light.green = green + l.green;
 		light.blue = blue + l.blue;
+		light.red = light.red > 1?1:light.red ;
+		light.green = light.green > 1 ? 1 : light.green;
+		light.blue = light.blue > 1 ? 1 : light.blue;
+
 		return light;
 	}
 };
 class SurfaceLight :public NormLight {
 public:
-	
+
 	double ks;
 	double alpha;
 	SurfaceLight operator* (const NormLight& l) {
@@ -128,7 +135,7 @@ public:
 };
 
 
-class LightSource:public NormLight {
+class LightSource :public NormLight {
 public:
 	double a;
 	double b;
@@ -180,7 +187,7 @@ public:
 };
 class Color {
 private:
-	
+
 	std::default_random_engine generator;
 	std::uniform_int_distribution<unsigned int> distribution_color;
 public:
@@ -227,7 +234,7 @@ public:
 		return normColor;
 	}
 
-	static unsigned int FromLerp(unsigned int c1, unsigned int c2,double percent) {
+	static unsigned int FromLerp(unsigned int c1, unsigned int c2, double percent) {
 		std::vector<int> com1 = Color(c1).GetARGBs();
 		std::vector<int> com2 = Color(c2).GetARGBs();
 		std::vector<unsigned int> com;
@@ -269,6 +276,20 @@ public:
 	void reSeed() {
 		std::random_device r;
 		generator = std::default_random_engine(r());
+	}
+	void PrintColor() {
+#ifdef _WINDOWS
+		OutputDebugString(L"-------------------\r\n");
+		vector<int> argb = GetARGBs();
+		for (int i : argb) {
+			char buf[32];
+			sprintf_s(buf, 32, "%d, ", i);
+			wstring str(buf, buf + 32);
+			OutputDebugString(str.c_str());
+		}
+		OutputDebugString(L"\r\n");
+
+#endif // _WINDOWS
 	}
 };
 
@@ -437,7 +458,7 @@ public:
 	}
 };
 
-class ColorPoint2D: public Point2D {
+class ColorPoint2D : public Point2D {
 public:
 	Color color;
 
@@ -449,7 +470,7 @@ public:
 		color = Color::BLACK;
 	}
 
-	ColorPoint2D(int x, int y,  Color color) :
+	ColorPoint2D(int x, int y, Color color) :
 		Point2D(x, y), color(color) {
 	}
 };
@@ -471,18 +492,18 @@ public:
 		hasNormal = false;
 	}
 
-	Point3D(int x, int y,int z)
-		:x(x),y(y),z(z) {
+	Point3D(int x, int y, int z)
+		:x(x), y(y), z(z) {
 		w = 1;
 		hasNormal = false;
 	}
 
-	Point3D(Matrix m){
+	Point3D(Matrix m) {
 		double W = m.data[3][0];
-		x = m.data[0][0]/W;
-		y = m.data[1][0]/W;
-		z = m.data[2][0]/W;
-		w = m.data[3][0]/W;
+		x = m.data[0][0] / W;
+		y = m.data[1][0] / W;
+		z = m.data[2][0] / W;
+		w = m.data[3][0] / W;
 		hasNormal = false;
 	}
 
@@ -522,37 +543,32 @@ class ColorPoint3D : public Point3D
 {
 public:
 	Color color;
-	bool useAmbientLight;
-	ColorPoint3D() :Point3D(){
+	ColorPoint3D() :Point3D() {
 		color = 0;
-		useAmbientLight = false;
 	}
-	ColorPoint3D(int x, int y, int z ) :
+	ColorPoint3D(int x, int y, int z) :
 		Point3D(x, y, z) {
 		color = Color::GREEN;
-		useAmbientLight = false;
 	}
 
-	ColorPoint3D(int x, int y, int z, Color color):
-		Point3D(x,y,z),color(color){
+	ColorPoint3D(int x, int y, int z, Color color) :
+		Point3D(x, y, z), color(color) {
 	}
 	ColorPoint3D(ColorPoint2D p, int z) {
 		x = p.x;
 		y = p.y;
 		this->z = z;
 		color = p.color;
-		useAmbientLight = false;
 	}
 
-	ColorPoint3D(Matrix m,Color color=Color::BLUE):
-		Point3D(m),color(color)
+	ColorPoint3D(Matrix m, Color color = Color::BLUE) :
+		Point3D(m), color(color)
 	{
-		useAmbientLight = false;
 	}
 	ColorPoint2D Get2DPoint() {
 		return ColorPoint2D(x, y);
 	}
-	
+
 	bool isInViewBox(ViewBox box) {
 		if (x<box.x_min || x>box.x_max) {
 			return false;
@@ -603,7 +619,7 @@ public:
 	}
 	Line(Point2D p1, Point2D p2, Color c1, Color c2) :p1(p1), p2(p2), c1(c1), c2(c2) {
 	}
-	Line(pair<Point2D, Color> p1, pair<Point2D, Color> p2) 
+	Line(pair<Point2D, Color> p1, pair<Point2D, Color> p2)
 		:Line(p1.first, p2.first, p1.second, p2.second) {
 	}
 
@@ -617,7 +633,7 @@ public:
 		return Point2D(x, y);
 	}
 
-	std::pair<Point2D,Color> GetHrizontalXPoint_blerp(int y) {
+	std::pair<Point2D, Color> GetHrizontalXPoint_blerp(int y) {
 		if (p1.x == p2.x) {
 			//return pair<Point2D, Color>(Point2D(p1.x, y), c1);
 			double percent = static_cast<double>(y - p1.y) / (p2.y - p1.y);
@@ -650,7 +666,7 @@ public:
 		int x = static_cast<int>((y - b) / m);
 		double percent = double(x - p1.x) / (p2.x - p1.x);
 		int z = lerp(p1.z, p2.z, percent);
-		return Point3D(x,y,z);
+		return Point3D(x, y, z);
 	}
 
 	ColorPoint3D GetHrizontalXPoint_blerp(int y) {
@@ -692,7 +708,7 @@ public:
 	ColorPoint3D** data;
 	int Rows;
 	int Cols;
-	MeshNet(int rows,int cols) {
+	MeshNet(int rows, int cols) {
 		Rows = rows;
 		Cols = cols;
 		data = new ColorPoint3D*[Rows];
@@ -721,10 +737,10 @@ public:
 		return Color::FromNormalizedRGB(surfaceLight.red, surfaceLight.green, surfaceLight.blue);
 	}
 
-	unsigned int GetLightColor(ColorPoint3D point){
-		NormLight ambientLight = surfaceLight*ambientLight;
+	unsigned int GetLightColor(ColorPoint3D point) {
+		NormLight amb = surfaceLight*ambientLight;
 		ColorPoint3D origin(0, 0, 0);
-		
+
 		NormLight sigma;
 		for (int i = 0; i < lightSources.size(); i++) {
 			LightSource ls = lightSources[i];
@@ -732,8 +748,8 @@ public:
 			double f_atti = 1.0 / (ls.a + ls.b*distance);
 			LightSource temp = ls * f_atti;
 
-			NormLight pointColor = point.color.ToNormalizedRGB();
-			D3Vector<double> lightVector = D3Vector<double>(-point.x, -point.y, -point.z);
+			NormLight pointColor = surfaceLight;
+			D3Vector<double> lightVector = D3Vector<double>(point.x, point.y, point.z);
 			lightVector.Normalize();
 			point.normalVector.Normalize();
 			NormLight left = pointColor * point.normalVector.dotproduct(lightVector);
@@ -742,7 +758,7 @@ public:
 
 			sigma = sigma + temp*sum;
 		}
-		NormLight total = ambientLight + sigma;
+		NormLight total = amb + sigma;
 		return Color::FromNormLight(total);
 	}
 };

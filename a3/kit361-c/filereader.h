@@ -158,11 +158,11 @@ public:
 				p2.SetNormalVector(avgNomal);
 				p3.SetNormalVector(avgNomal);
 
-				p1.color = lightParam.GetLightColor(p1);
-				p2.color = lightParam.GetLightColor(p2);
-				p3.color = lightParam.GetLightColor(p3);
+				//p1.color = lightParam.GetLightColor(p1);
+				//p2.color = lightParam.GetLightColor(p2);
+				//p3.color = lightParam.GetLightColor(p3);
 
-				DepthTriangleDrawer3D drawer(&scene, &camera);
+				DepthTriangleDrawer3D drawer(&scene, &camera,&lightParam);
 				drawer.drawTriangle3D({ p1,p2,p3 }, transMatrix);
 				//TriangleDrawer3D drawer(_drawable);
 				//ShapeHelper3D::drawTriangle3D(pane, &drawer, { p1,p2,p3 }, transMatrix, colorMode);
