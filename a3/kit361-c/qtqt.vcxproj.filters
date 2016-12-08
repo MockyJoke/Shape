@@ -104,14 +104,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="simp.txt" />
     <Text Include="p3_4.txt" />
-    <Text Include="p5.txt" />
     <Text Include="simp1.txt" />
     <Text Include="simp2.txt" />
     <Text Include="mesh1.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="longform" />
   </ItemGroup>
 </Project>

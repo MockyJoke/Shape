@@ -191,13 +191,8 @@
   <ItemGroup>
     <Text Include="mesh1.txt" />
     <Text Include="p3_4.txt" />
-    <Text Include="p5.txt" />
-    <Text Include="simp.txt" />
     <Text Include="simp1.txt" />
     <Text Include="simp2.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="longform" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
