@@ -22,5 +22,13 @@ HEADERS  += \
     pageturner.h \
     client.h \
     window361.h \
-    renderarea361.h
+    renderarea361.h \
+    utility.h \
+    stringhelper.h \
+    shapeHelper.h \
+    projection.h \
+    filereader.h \
+    drawers3d.h \
+    drawers.h \
+    depthdrawers.h
 

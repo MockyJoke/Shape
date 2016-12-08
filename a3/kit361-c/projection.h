@@ -2,7 +2,7 @@
 #include "utility.h"
 #include "drawable.h"
 #include <tuple>
-
+#include <climits>
 using namespace std;
 
 class DepthBuffer {

@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
 		client.fileName = argv[1];
 	}
 	else {
-		client.fileName = "simp1.txt";
+        client.fileName = "../kit361-c/simp1.txt";
 
 	}
     window.setPageTurner(&client);  // the window must be given a (PageTurner *)
